@@ -133,7 +133,7 @@ class VocabListController {
     );
   }
 
-  Future<void> deleteChapter(var db,int id) async {
+  Future<void> deleteWord(var db,int id) async {
     // Get a reference to the database.
 
     // Remove the Dog from the database.

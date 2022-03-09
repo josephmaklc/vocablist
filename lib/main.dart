@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:vocablist2/aboutDialog.dart';
+import 'package:vocablist2/areYouSureDialog.dart';
 //import 'db/controller/ChapterController.dart';
 //import 'chapterview.dart';
 //import 'db/model/Chapter.dart';
@@ -127,13 +128,42 @@ class _MyAppState extends State<MyApp> {
             ListTile item = ListTile(
 
               title: Text(vocabList[index].word,style:TextStyle(fontSize: fontSize)),
-              onTap: () async {
-                await showVocabularyDialog(context, db, vocabList[index]);
-                var refreshedList=await _getThingsOnStartup();
-                setState(() {
-                  vocabList=refreshedList;
-                });
-              }, // Handle your onTap here.
+                trailing: Wrap(
+
+                  children: <Widget>[
+                      IconButton(
+                      icon: Icon(
+                        Icons.edit,
+                      ),
+                      onPressed: () async {
+                        await showVocabularyDialog(context, db, vocabList[index]);
+                        var refreshedList=await _getThingsOnStartup();
+                        setState(() {
+                          vocabList=refreshedList;
+                        });
+
+                      }, // Handle your onTap here.
+                    ), // icon-1
+                    IconButton(
+                      icon: Icon(
+                        Icons.delete,
+                      ),
+                      onPressed: () async {
+                        bool reallyDelete = await areYouSureDialog(context, "Delete Word","Are you sure?");
+                        if (reallyDelete) {
+                          VocabListController c = VocabListController();
+                          c.deleteWord(db, vocabList[index].id!);
+                          var refreshedList = await _getThingsOnStartup();
+                          setState(() {
+                            vocabList = refreshedList;
+                          });
+                        }
+
+
+                      }, // Handle your onTap here.
+                    )
+                  ],
+                )
             );
             return item;
           },
