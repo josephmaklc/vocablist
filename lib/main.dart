@@ -4,13 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:vocablist2/aboutDialog.dart';
 import 'package:vocablist2/areYouSureDialog.dart';
-//import 'db/controller/ChapterController.dart';
-//import 'chapterview.dart';
-//import 'db/model/Chapter.dart';
 import 'db/controller/vocabListController.dart';
 import 'db/model/VocabInfo.dart';
 import 'dart:async';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter_tts/flutter_tts.dart';
 
 import 'editVocabDialog.dart';
 
@@ -67,7 +65,7 @@ class _MyAppState extends State<MyApp> {
 
   }
 
-
+  final FlutterTts tts = FlutterTts();
   Scaffold vocabListScaffold(BuildContext context, List<VocabInfo> vocabList) {
     return Scaffold(
         appBar: AppBar(
@@ -131,12 +129,22 @@ class _MyAppState extends State<MyApp> {
                 trailing: Wrap(
 
                   children: <Widget>[
-                      IconButton(
+                    IconButton(
+                      icon: Icon(
+                        Icons.hearing,
+                      ),
+                      onPressed: () async {
+                        tts.speak(vocabList[index].word);
+
+                      }, // Handle your onTap here.
+                    ), // icon-1
+
+                    IconButton(
                       icon: Icon(
                         Icons.edit,
                       ),
                       onPressed: () async {
-                        await showVocabularyDialog(context, db, vocabList[index]);
+                        await showVocabularyDialog(context, db, tts, vocabList[index]);
                         var refreshedList=await _getThingsOnStartup();
                         setState(() {
                           vocabList=refreshedList;
@@ -149,7 +157,7 @@ class _MyAppState extends State<MyApp> {
                         Icons.delete,
                       ),
                       onPressed: () async {
-                        bool reallyDelete = await areYouSureDialog(context, "Delete Word","Are you sure?");
+                        bool reallyDelete = await areYouSureDialog(context, "Delete Word","Are you sure to delete '"+vocabList[index].word+"'?");
                         if (reallyDelete) {
                           VocabListController c = VocabListController();
                           c.deleteWord(db, vocabList[index].id!);
@@ -171,7 +179,7 @@ class _MyAppState extends State<MyApp> {
 
         floatingActionButton: FloatingActionButton(
         onPressed: () async {
-         await showVocabularyDialog(context, db, new VocabInfo(id: 0, word: "", definition: ""));
+         await showVocabularyDialog(context, db, tts, new VocabInfo(id: 0, word: "", definition: ""));
          var refreshedList=await _getThingsOnStartup();
          setState(() {
            vocabList=refreshedList;

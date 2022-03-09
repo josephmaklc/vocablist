@@ -3,19 +3,29 @@ import 'package:sqflite/sqflite.dart';
 
 import 'db/controller/vocabListController.dart';
 import 'db/model/VocabInfo.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+void _launchURL(String _url) async {
+  if (!await launch(_url)) {
+    throw 'Could not launch $_url';
+  }
+}
 
 Future<void> showVocabularyDialog(
-    BuildContext context, Database db, VocabInfo vocabInfo) async {
+    BuildContext context, Database db, FlutterTts fluttertts, VocabInfo vocabInfo) async {
   var wordController = TextEditingController(text: vocabInfo.word);
   var definitionController = TextEditingController(text: vocabInfo.definition);
   String errorMessage = "";
 
   await showDialog(
+
     context: context,
     builder: (context) {
       return StatefulBuilder(builder: (context, setState) {
         return AlertDialog(
           title: const Text('Vocabulary', textAlign: TextAlign.center),
+
           content: SingleChildScrollView(
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,9 +42,26 @@ Future<void> showVocabularyDialog(
                       }
                       return null;
                     },
-                    decoration: InputDecoration(border: OutlineInputBorder())),
+                    decoration: InputDecoration(border: OutlineInputBorder())
+                ),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      TextButton(onPressed: () {
+                        if (!wordController.text.isEmpty) {
+                          fluttertts.speak(wordController.text);
+                        }
+                      },
+                        child:Text("Pronounce")),
+                      TextButton(onPressed: () {
+                        _launchURL("https://en.wiktionary.org/wiki/"+wordController.text);
+                      },
+                          child:Text("Definition on Web"))
 
-                    Padding(
+                      ]
+
+                ),
+                Padding(
                       padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
                       child: Text("Definition:", textAlign: TextAlign.left),
                     ),
