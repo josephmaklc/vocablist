@@ -209,7 +209,7 @@ class _MyAppState extends State<MyApp> {
   late Database db;
   Future<List<VocabInfo>> _getThingsOnStartup() async {
 
-    print("getThingsOnStartup");
+    //print("getThingsOnStartup");
 
     VocabListController c = VocabListController();
     db = await c.initVocabularyTable();

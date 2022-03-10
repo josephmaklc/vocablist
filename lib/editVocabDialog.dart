@@ -5,11 +5,54 @@ import 'db/controller/vocabListController.dart';
 import 'db/model/VocabInfo.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
+
+const String translateAPI = "http://api.microsofttranslator.com/V2/Ajax.svc/Translate?oncomplete=mycallback&appId=B3E6A7DFAC5FC07CFFD6496F5F79012228A35E86";
 
 void _launchURL(String _url) async {
   if (!await launch(_url)) {
     throw 'Could not launch $_url';
   }
+}
+
+Future<String> getTranslation(String word, String language) async {
+  String langCode = "";
+  if (language=="Spanish")
+    langCode = "es";
+  if (language=="French")
+    langCode = "fr";
+  if (language=="Simplified Chinese")
+    langCode = "zh-CHS"; // bing
+  if (language=="Traditional Chinese")
+    langCode = "zh-CHT"; // bing
+
+  String url = translateAPI+"&from=en&to="+langCode+"&text="+word;
+  //print("url:"+url);
+  final response = await http
+      .get(Uri.parse(url));
+
+  if (response.statusCode == 200) {
+    // If the server did return a 200 OK response,
+    // then parse the JSON.
+
+    //print("translation: "+response.body);
+    String bingResult = response.body;
+    String translatedText="";
+    String thePrefix = "mycallback";
+    if (bingResult.indexOf(thePrefix)>=0) {
+      translatedText = bingResult.substring(thePrefix.length+2,bingResult.length-3);
+    }
+    else {
+      translatedText=bingResult;
+    }
+    //print("translation: "+translatedText);
+    return translatedText;
+  } else {
+    // If the server did not return a 200 OK response,
+    // then throw an exception.
+    throw Exception('Failed to call translation API');
+  }
+  return "";
 }
 
 Future<void> showVocabularyDialog(
@@ -18,6 +61,7 @@ Future<void> showVocabularyDialog(
   var definitionController = TextEditingController(text: vocabInfo.definition);
   String errorMessage = "";
 
+  String languagePref="Spanish";
   await showDialog(
 
     context: context,
@@ -61,6 +105,50 @@ Future<void> showVocabularyDialog(
                       ]
 
                 ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+
+                        Flexible(
+                            child: DropdownButton<String>(
+                                value: languagePref,
+                                icon: const Icon(Icons.arrow_downward),
+                                elevation: 16,
+                                style: const TextStyle(color: Colors.deepPurple),
+                                underline: Container(
+                                  height: 2,
+                                  color: Colors.deepPurpleAccent,
+                                ),
+                                onChanged: (String? newValue) async {
+                                  //String translation = await getTranslation(wordController.text,newValue!);
+
+                                  setState(() {
+                                    languagePref = newValue!;
+                                    //definitionController.text=translation;
+                                  });
+                                },
+                                items: <String>[
+                                  'Spanish',
+                                  'French',
+                                  'Traditional Chinese',
+                                  'Simplified Chinese'
+                                ].map<DropdownMenuItem<String>>((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList()),
+
+                        ),
+                        TextButton(onPressed: () async {
+                          String translation = await getTranslation(wordController.text,languagePref);
+
+                          setState(() {
+                            definitionController.text=translation;
+                          });
+                        }, child: Text("Translate")),
+                      ],
+                    ),
                 Padding(
                       padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
                       child: Text("Definition:", textAlign: TextAlign.left),

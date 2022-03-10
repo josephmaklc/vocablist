@@ -94,12 +94,14 @@ class VocabListController {
 
       );
     });
-
+/*
     print("all vocab");
     print("---------");
     for (VocabInfo v in result) {
       print(v);
     }
+
+ */
     return result;
   }
 
