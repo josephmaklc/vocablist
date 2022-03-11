@@ -1,7 +1,7 @@
 class VocabInfo {
-  final int? id;
-  final String word;
-  final String definition;
+  int? id;
+  String word;
+  String definition;
 
   VocabInfo({
     required this.id,

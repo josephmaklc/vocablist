@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:vocablist2/aboutDialog.dart';
 import 'package:vocablist2/areYouSureDialog.dart';
+import 'package:vocablist2/vocabForm.dart';
+import 'package:vocablist2/wordCardDialog.dart';
 import 'db/controller/vocabListController.dart';
 import 'db/model/VocabInfo.dart';
 import 'dart:async';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_tts/flutter_tts.dart';
-
-import 'editVocabDialog.dart';
 
 const String appTitle = "Vocabulary List";
 const String author = "Joseph Mak";
@@ -79,13 +79,13 @@ class _MyAppState extends State<MyApp> {
                       myShowAboutDialog(context, appTitle, author, version, appDate)
                 },
               )
-              */
-              IconButton(
-                  icon: Icon(Icons.search),
-                  onPressed: () {
-                    print("search");
-                  })
 
+              IconButton(
+                  icon: Icon(Icons.menu),
+                  onPressed: () {
+                    print("menu");
+                  })
+*/
             ]
         ),
 
@@ -126,25 +126,24 @@ class _MyAppState extends State<MyApp> {
             ListTile item = ListTile(
 
               title: Text(vocabList[index].word,style:TextStyle(fontSize: fontSize)),
+                onTap: () {
+                  wordCardDialog(context, tts, vocabList[index]);
+                },
                 trailing: Wrap(
 
                   children: <Widget>[
-                    IconButton(
-                      icon: Icon(
-                        Icons.hearing,
-                      ),
-                      onPressed: () async {
-                        tts.speak(vocabList[index].word);
-
-                      }, // Handle your onTap here.
-                    ), // icon-1
 
                     IconButton(
                       icon: Icon(
                         Icons.edit,
                       ),
                       onPressed: () async {
-                        await showVocabularyDialog(context, db, tts, vocabList[index]);
+                        //await showVocabularyDialog(context, db, tts, vocabList[index]);
+
+                        await Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => VocabForm(vocabInfo: vocabList[index], languagePref: 'Traditional Chinese', fluttertts: tts, db: db)));
+
                         var refreshedList=await _getThingsOnStartup();
                         setState(() {
                           vocabList=refreshedList;
@@ -179,8 +178,12 @@ class _MyAppState extends State<MyApp> {
 
         floatingActionButton: FloatingActionButton(
         onPressed: () async {
-         await showVocabularyDialog(context, db, tts, new VocabInfo(id: 0, word: "", definition: ""));
-         var refreshedList=await _getThingsOnStartup();
+         //await showVocabularyDialog(context, db, tts, new VocabInfo(id: 0, word: "", definition: ""));
+          await Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => VocabForm(vocabInfo:  new VocabInfo(id: 0, word: "", definition: ""), languagePref: 'Traditional Chinese', fluttertts: tts, db: db)));
+
+          var refreshedList=await _getThingsOnStartup();
          setState(() {
            vocabList=refreshedList;
          });

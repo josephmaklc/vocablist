@@ -105,6 +105,19 @@ class VocabListController {
     return result;
   }
 
+  Future<bool> doesWordExistAlready(var db, String word) async {
+    //print("Trying to get chapter... "+i.toString()+" language="+language);
+    try {
+      List<Map> result = await db.rawQuery("SELECT * FROM vocabulary WHERE word=?",[word]);
+
+      return (result.isNotEmpty);
+      }
+    catch (e) {
+      print ("Error doesWordExistAlready: "+e.toString());
+      return false;
+    }
+  }
+
   Future<VocabInfo> getWord(var db, int i) async {
     //print("Trying to get chapter... "+i.toString()+" language="+language);
     try {
