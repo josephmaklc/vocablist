@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 
 import 'db/controller/vocabListController.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const String translateAPI = "http://api.microsofttranslator.com/V2/Ajax.svc/Translate?oncomplete=mycallback&appId=B3E6A7DFAC5FC07CFFD6496F5F79012228A35E86";
 const String translateAPIResultPrefix = "mycallback";
@@ -13,23 +14,41 @@ const String translateAPIResultPrefix = "mycallback";
 
 class VocabForm extends StatefulWidget {
   VocabInfo vocabInfo;
-  String languagePref;
+  String languagePref="Traditional Chinese";
   Database db;
   FlutterTts fluttertts;
   String errorMessage="";
 
-  VocabForm({Key? key, required this.vocabInfo, required this.languagePref, required this.db, required this.fluttertts}) : super(key: key);
+  VocabForm({Key? key, required this.vocabInfo, required this.db, required this.fluttertts}) : super(key: key);
 
   @override
   _VocabFormState createState() => _VocabFormState();
+
 }
+
 
 class _VocabFormState extends State<VocabForm> {
   String errorMessage="";
 
+  @override
+  void initState() {
+    super.initState();
+    _loadCounter();
+  }
+
+  //Loading counter value on start
+  void _loadCounter() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      print("setting init language pref");
+      widget.languagePref = (prefs.getString('languagePref') ?? "Traditional Chinese");
+    });
+  }
+
+  // validate word on Ok
   Future<bool> validate(VocabListController c, String originalWord, word) async {
 
-    if (word.isEmpty) {
+    if (word.trim().isEmpty) {
       _showToast(context, "Please enter a word");
       return false;
     }
@@ -51,7 +70,6 @@ class _VocabFormState extends State<VocabForm> {
   Widget build(BuildContext context) {
     var wordController = TextEditingController(text: widget.vocabInfo.word);
     var definitionController = TextEditingController(text: widget.vocabInfo.definition);
-
 
     return Scaffold(
         appBar:
@@ -117,7 +135,13 @@ class _VocabFormState extends State<VocabForm> {
 
                                   setState(() {
                                     widget.languagePref = newValue!;
+                                    widget.vocabInfo.word=wordController.text; // preserve changed word
                                   });
+
+                                  // save pref
+                                  final prefs = await SharedPreferences.getInstance();
+                                  prefs.setString('languagePref', newValue!);
+
                                 },
                                 items: <String>[
                                   'Spanish',
@@ -130,10 +154,9 @@ class _VocabFormState extends State<VocabForm> {
                                     child: Text(value),
                                   );
                                 }).toList()),
-
                           ),
                           TextButton(onPressed: () async {
-                            print("translate");
+                            //print("translate");
                             String translation = await getTranslation(context, wordController.text,widget.languagePref);
 
                             setState(() {
@@ -179,13 +202,13 @@ class _VocabFormState extends State<VocabForm> {
                               if (!validateResult) return;
 
                               if (widget.vocabInfo.id == 0) {
-                                print("insert new word: " + word + " defn: " + definition);
+                                //print("insert new word: " + word + " defn: " + definition);
                                 VocabInfo newVocab = new VocabInfo(
                                     id: null, word: word, definition: definition);
 
                                 c.insertVocabulary(widget.db, newVocab);
                               } else {
-                                print("edit word " + widget.vocabInfo.id.toString());
+                                //print("edit word " + widget.vocabInfo.id.toString());
                                 VocabInfo editVocabInfo = new VocabInfo(
                                     id: widget.vocabInfo.id, word: word, definition: definition);
                                 // check if word exist already
@@ -255,7 +278,7 @@ Future<String> getTranslation(BuildContext context, String word, String language
     else {
       translatedText=bingResult;
     }
-    print("translation: "+translatedText);
+    //print("translation: "+translatedText);
     return translatedText;
   } else {
     // If the server did not return a 200 OK response,

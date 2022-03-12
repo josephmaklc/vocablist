@@ -142,7 +142,7 @@ class _MyAppState extends State<MyApp> {
 
                         await Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => VocabForm(vocabInfo: vocabList[index], languagePref: 'Traditional Chinese', fluttertts: tts, db: db)));
+                            MaterialPageRoute(builder: (context) => VocabForm(vocabInfo: vocabList[index], fluttertts: tts, db: db)));
 
                         var refreshedList=await _getThingsOnStartup();
                         setState(() {
@@ -181,7 +181,7 @@ class _MyAppState extends State<MyApp> {
          //await showVocabularyDialog(context, db, tts, new VocabInfo(id: 0, word: "", definition: ""));
           await Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => VocabForm(vocabInfo:  new VocabInfo(id: 0, word: "", definition: ""), languagePref: 'Traditional Chinese', fluttertts: tts, db: db)));
+              MaterialPageRoute(builder: (context) => VocabForm(vocabInfo:  new VocabInfo(id: 0, word: "", definition: ""), fluttertts: tts, db: db)));
 
           var refreshedList=await _getThingsOnStartup();
          setState(() {
