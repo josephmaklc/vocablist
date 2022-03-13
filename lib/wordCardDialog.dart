@@ -23,8 +23,20 @@ void wordCardDialog(BuildContext context, FlutterTts tts, VocabInfo vocabInfo) a
         content: SingleChildScrollView(
           child: ListBody(
             children: <Widget>[
-              Text(vocabInfo.definition, textAlign: TextAlign.center),
-            ],
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+                Text(vocabInfo.definition, textAlign: TextAlign.center),
+
+                IconButton(
+                  icon: Icon(
+                    Icons.chat,
+                  ),
+                  onPressed: () async {
+                    tts.speak(vocabInfo.definition);
+
+                  }, // Handle your onTap here.
+              )
+            ])],
           ),
         ),
         actions: <Widget>[

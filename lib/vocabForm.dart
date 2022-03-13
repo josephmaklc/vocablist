@@ -6,18 +6,19 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 
 import 'db/controller/vocabListController.dart';
+import 'toast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const String translateAPI = "http://api.microsofttranslator.com/V2/Ajax.svc/Translate?oncomplete=mycallback&appId=B3E6A7DFAC5FC07CFFD6496F5F79012228A35E86";
 const String translateAPIResultPrefix = "mycallback";
-
+const String defaultLanguagePref = "Traditional Chinese";
 
 class VocabForm extends StatefulWidget {
   VocabInfo vocabInfo;
-  String languagePref="Traditional Chinese";
+  String languagePref=defaultLanguagePref;
   Database db;
   FlutterTts fluttertts;
-  String errorMessage="";
+//  String errorMessage="";
 
   VocabForm({Key? key, required this.vocabInfo, required this.db, required this.fluttertts}) : super(key: key);
 
@@ -28,7 +29,6 @@ class VocabForm extends StatefulWidget {
 
 
 class _VocabFormState extends State<VocabForm> {
-  String errorMessage="";
 
   @override
   void initState() {
@@ -41,7 +41,7 @@ class _VocabFormState extends State<VocabForm> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       print("setting init language pref");
-      widget.languagePref = (prefs.getString('languagePref') ?? "Traditional Chinese");
+      widget.languagePref = (prefs.getString('languagePref') ?? defaultLanguagePref);
     });
   }
 
@@ -49,16 +49,16 @@ class _VocabFormState extends State<VocabForm> {
   Future<bool> validate(VocabListController c, String originalWord, word) async {
 
     if (word.trim().isEmpty) {
-      _showToast(context, "Please enter a word");
+      showToast(context, "Please enter a word");
       return false;
     }
     else {
       if (widget.vocabInfo.id==0 && await c.doesWordExistAlready(widget.db, word)) {
-        _showToast(context, "This word is already on your list");
+        showToast(context, "This word is already on your list");
         return false;
       }
       if (widget.vocabInfo.id!=0 && (word != originalWord) && await c.doesWordExistAlready(widget.db, word)) {
-        _showToast(context, "Changed word is already on your list");
+        showToast(context, "This word is already on your list");
         return false;
       }
 
@@ -112,7 +112,7 @@ class _VocabFormState extends State<VocabForm> {
                             TextButton(onPressed: () {
                               _launchURL("https://en.wiktionary.org/wiki/"+wordController.text);
                             },
-                                child:Text("Definition on Web"))
+                                child:Text("Definition on Web >"))
 
                           ]
 
@@ -155,7 +155,7 @@ class _VocabFormState extends State<VocabForm> {
                                   );
                                 }).toList()),
                           ),
-                          TextButton(onPressed: () async {
+                          ElevatedButton(onPressed: () async {
                             //print("translate");
                             String translation = await getTranslation(context, wordController.text,widget.languagePref);
 
@@ -182,10 +182,12 @@ class _VocabFormState extends State<VocabForm> {
                       Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Text(errorMessage,
-                                style: const TextStyle(
-                                  color: Colors.red,
-                                ))
+                            TextButton(onPressed: () async {
+                              if (!definitionController.text.isEmpty) {
+                                widget.fluttertts.speak(definitionController.text);
+                              }
+
+                            }, child: Text("Pronounce")),
                           ]),
 
                       Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -239,17 +241,6 @@ void _launchURL(String _url) async {
   }
 }
 
-void _showToast(BuildContext context, String message) {
-  final scaffold = ScaffoldMessenger.of(context);
-  scaffold.showSnackBar(
-    SnackBar(
-      content: Text(message),
-      action: SnackBarAction(
-          label: 'X', onPressed: scaffold.hideCurrentSnackBar),
-    ),
-  );
-}
-
 Future<String> getTranslation(BuildContext context, String word, String language) async {
   String langCode = "";
   if (language=="Spanish")
@@ -283,7 +274,7 @@ Future<String> getTranslation(BuildContext context, String word, String language
   } else {
     // If the server did not return a 200 OK response,
     // then throw an exception.
-    _showToast(context, "Sorry, cannot get translation");
+    showToast(context, "Sorry, cannot get translation");
     throw Exception('Failed to call translation API');
   }
   return "";

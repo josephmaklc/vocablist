@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:vocablist2/aboutDialog.dart';
 import 'package:vocablist2/areYouSureDialog.dart';
+import 'package:vocablist2/toast.dart';
 import 'package:vocablist2/vocabForm.dart';
 import 'package:vocablist2/wordCardDialog.dart';
 import 'db/controller/vocabListController.dart';
@@ -67,6 +68,7 @@ class _MyAppState extends State<MyApp> {
 
   final FlutterTts tts = FlutterTts();
   Scaffold vocabListScaffold(BuildContext context, List<VocabInfo> vocabList) {
+
     return Scaffold(
         appBar: AppBar(
 
@@ -220,7 +222,10 @@ class _MyAppState extends State<MyApp> {
     //await c.clearVocabListTable(db);
 
 
-    return await c.getAllVocabulary(db);
+    List<VocabInfo> result = await c.getAllVocabulary(db);
+
+    return result;
+
 
   }
 }
