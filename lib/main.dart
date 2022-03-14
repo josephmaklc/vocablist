@@ -117,7 +117,6 @@ class _MyAppState extends State<MyApp> {
         ),
 
         body:
-
         ListView.separated(
           separatorBuilder: (context, index) => Divider(
             color: Colors.black,
@@ -126,6 +125,7 @@ class _MyAppState extends State<MyApp> {
           itemBuilder: (context, index) {
 
             ListTile item = ListTile(
+
 
               title: Text(vocabList[index].word,style:TextStyle(fontSize: fontSize)),
                 onTap: () {
@@ -223,6 +223,9 @@ class _MyAppState extends State<MyApp> {
 
 
     List<VocabInfo> result = await c.getAllVocabulary(db);
+//    if (result.isEmpty) {
+//      showToast(context, "Use Add button to add some words");
+//    }
 
     return result;
 

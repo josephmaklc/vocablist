@@ -253,29 +253,36 @@ Future<String> getTranslation(BuildContext context, String word, String language
     langCode = "zh-CHT"; // bing
 
   String url = translateAPI+"&from=en&to="+langCode+"&text="+word;
-  //print("url:"+url);
-  final response = await http
-      .get(Uri.parse(url));
+//  print("url:"+url);
 
-  if (response.statusCode == 200) {
-    // If the server did return a 200 OK response,
-    // then parse the JSON.
+  try {
+    final response = await http
+        .get(Uri.parse(url));
 
-    String bingResult = response.body;
-    String translatedText="";
-    if (bingResult.indexOf(translateAPIResultPrefix)>=0) {
-      translatedText = bingResult.substring(translateAPIResultPrefix.length+2,bingResult.length-3);
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+
+      String bingResult = response.body;
+      String translatedText = "";
+      if (bingResult.indexOf(translateAPIResultPrefix) >= 0) {
+        translatedText = bingResult.substring(
+            translateAPIResultPrefix.length + 2, bingResult.length - 3);
+      }
+      else {
+        translatedText = bingResult;
+      }
+      //print("translation: "+translatedText);
+      return translatedText;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      showToast(context, "Sorry, cannot get translation");
+      throw Exception('Failed to call translation API');
     }
-    else {
-      translatedText=bingResult;
-    }
-    //print("translation: "+translatedText);
-    return translatedText;
-  } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
+  } catch (Exception) {
+    print("bam");
     showToast(context, "Sorry, cannot get translation");
-    throw Exception('Failed to call translation API');
+    throw Exception;
   }
-  return "";
 }
