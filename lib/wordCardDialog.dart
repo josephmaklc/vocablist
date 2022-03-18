@@ -10,7 +10,7 @@ void wordCardDialog(BuildContext context, FlutterTts tts, VocabInfo vocabInfo) a
         title:
         Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
           Text(vocabInfo.word, textAlign: TextAlign.center),
-            IconButton(
+          IconButton(
               icon: Icon(
                 Icons.chat,
               ),

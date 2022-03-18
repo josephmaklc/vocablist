@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:vocablist2/aboutDialog.dart';
 import 'package:vocablist2/areYouSureDialog.dart';
+import 'package:vocablist2/flashCardForm.dart';
 import 'package:vocablist2/toast.dart';
 import 'package:vocablist2/vocabForm.dart';
 import 'package:vocablist2/wordCardDialog.dart';
@@ -12,6 +13,8 @@ import 'db/model/VocabInfo.dart';
 import 'dart:async';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_tts/flutter_tts.dart';
+
+import 'flashCardDialog.dart';
 
 const String appTitle = "Vocabulary List";
 const String author = "Joseph Mak";
@@ -104,6 +107,17 @@ class _MyAppState extends State<MyApp> {
                 ),
               ),
 
+
+              ListTile(
+                leading: const Icon(Icons.note_outlined),
+                title: Text('Flash Cards',style:TextStyle(fontSize: fontSize)),
+                onTap: () async {
+                  //flashCardDialog(context, tts, vocabList);
+                  await Navigator.push(
+                      context,
+                  MaterialPageRoute(builder: (context) => FlashCardWidget(vocabList: vocabList, fluttertts: tts, db: db)));
+                },
+              ),
               ListTile(
                 leading: const Icon(Icons.info_outline),
                 title: Text('About',style:TextStyle(fontSize: fontSize)),
