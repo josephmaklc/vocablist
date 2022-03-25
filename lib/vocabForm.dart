@@ -33,15 +33,19 @@ class _VocabFormState extends State<VocabForm> {
   @override
   void initState() {
     super.initState();
-    _loadCounter();
+    _doInit();
   }
 
-  //Loading counter value on start
-  void _loadCounter() async {
+  void _doInit() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      print("setting init language pref");
-      widget.languagePref = (prefs.getString('languagePref') ?? defaultLanguagePref);
+      print("setting init language pref in vocabForm");
+      print("wordLanguage:"+ prefs.getString("wordLanguage")!);
+      print("wordTTS:"+ prefs.getString("wordTTS")!);
+      print("translationLanguage:"+ prefs.getString("translationLanguage")!);
+      print("translationTTS:"+ prefs.getString("translationTTS")!);
+      widget.languagePref=prefs.getString("translationLanguage") ?? defaultLanguagePref;
+      //widget.languagePref = (prefs.getString('languagePref') ?? defaultLanguagePref);
     });
   }
 
@@ -121,40 +125,7 @@ class _VocabFormState extends State<VocabForm> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
 
-                          Flexible(
-                            child: DropdownButton<String>(
-                                value: widget.languagePref,
-                                icon: const Icon(Icons.arrow_downward),
-                                elevation: 16,
-                                style: const TextStyle(color: Colors.deepPurple),
-                                underline: Container(
-                                  height: 2,
-                                  color: Colors.deepPurpleAccent,
-                                ),
-                                onChanged: (String? newValue) async {
 
-                                  setState(() {
-                                    widget.languagePref = newValue!;
-                                    widget.vocabInfo.word=wordController.text; // preserve changed word
-                                  });
-
-                                  // save pref
-                                  final prefs = await SharedPreferences.getInstance();
-                                  prefs.setString('languagePref', newValue!);
-
-                                },
-                                items: <String>[
-                                  'Spanish',
-                                  'French',
-                                  'Traditional Chinese',
-                                  'Simplified Chinese'
-                                ].map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList()),
-                          ),
                           ElevatedButton(onPressed: () async {
                             //print("translate");
                             String translation = await getTranslation(context, wordController.text,widget.languagePref);
@@ -164,7 +135,7 @@ class _VocabFormState extends State<VocabForm> {
                               widget.vocabInfo.definition=translation;
 
                             });
-                          }, child: Text("Translate")),
+                          }, child: Text("Translate to "+widget.languagePref)),
                         ],
                       ),
                       Padding(
@@ -242,7 +213,7 @@ void _launchURL(String _url) async {
 }
 
 Future<String> getTranslation(BuildContext context, String word, String language) async {
-  String langCode = "";
+  String langCode = "en";
   if (language=="Spanish")
     langCode = "es";
   if (language=="French")

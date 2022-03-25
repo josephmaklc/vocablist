@@ -13,8 +13,9 @@ import 'db/model/VocabInfo.dart';
 import 'dart:async';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_tts/flutter_tts.dart';
-
+import 'configDialog.dart';
 import 'flashCardDialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const String appTitle = "Vocabulary List";
 const String author = "Joseph Mak";
@@ -44,9 +45,26 @@ class _MyAppState extends State<MyApp> {
   String title=appTitle;
   double fontSize=20;
 
+  String wordLanguage="English", wordTTS="English US (Female)";
+  String translationLanguage="Traditional Chinese", translationTTS="Cantonese Chinese (Female)";
+
   @override
   void initState() {
     super.initState();
+    _doInit();
+  }
+
+  void _doInit() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      print("setting init language pref");
+      wordLanguage = (prefs.getString('wordLanguage') ?? "English");
+      wordTTS = (prefs.getString('wordTTS') ?? "English US (Female)");
+      translationLanguage = (prefs.getString('translationLanguage') ?? "Traditional Chinese");
+      translationTTS = (prefs.getString('translationTTS') ?? "Cantonese Chinese (Female)");
+
+    });
   }
 
   @override
@@ -117,6 +135,29 @@ class _MyAppState extends State<MyApp> {
                       context,
                   MaterialPageRoute(builder: (context) => FlashCardWidget(vocabList: vocabList, fluttertts: tts, db: db)));
                 },
+              ),
+              ListTile(
+                leading: const Icon(Icons.settings),
+                title: Text('Settings',style:TextStyle(fontSize: fontSize)),
+                onTap: () async {
+                  ConfigInfo result = await showConfigurationDialog(context, wordLanguage, wordTTS, translationLanguage, translationTTS);
+                  final prefs = await SharedPreferences.getInstance();
+
+                  setState(() {
+                    wordLanguage = result.wordLanguage;
+                    wordTTS = result.wordTTS;
+                    translationLanguage = result.translationLanguage;
+                    translationTTS = result.translationTTS;
+                    prefs.setString("wordLanguage",wordLanguage);
+                    prefs.setString("wordTTS",wordTTS);
+                    prefs.setString("translationLanguage",translationLanguage);
+                    prefs.setString("translationTTS",translationTTS);
+                  });
+
+
+                  Navigator.pop(context);
+                }
+
               ),
               ListTile(
                 leading: const Icon(Icons.info_outline),
