@@ -49,6 +49,25 @@ class _VocabFormState extends State<VocabForm> {
     });
   }
 
+  // https://cloud.google.com/text-to-speech/docs/voices
+  String getLanguageCodeForTTS(String ttsDescription) {
+    if (ttsDescription=='English UK (Female)') return "en-GB-Standard-A";
+    if (ttsDescription=='English UK (Male)') return "en-GB-Standard-B";
+    if (ttsDescription=='English US (Female)') return "en-US-Standard-A";
+    if (ttsDescription=='English US (Male)') return "en-US-Standard-B";
+    if (ttsDescription=='French (Female)') return "fr-FR-Standard-A";
+    if (ttsDescription=='French (Male)') return "fr-FR-Standard-B";
+    if (ttsDescription=='Spanish (Female)') return "es-ES-Standard-A";
+    if (ttsDescription=='Spanish (Male)') return "es-ES-Standard-B";
+    if (ttsDescription=='Mandarin Chinese (Female)') return "cmn-CN-Standard-A";
+    if (ttsDescription=='Mandarin Chinese (Male)') return "cmn-CN-Standard-B";
+    if (ttsDescription=='Cantonese Chinese (Female)') return "yue-HK-Standard-A";
+    if (ttsDescription=='Cantonese Chinese (Male)') return "yue-HK-Standard-B";
+    print("oh tts description is: "+ttsDescription);
+    return "en-GB-Standard-A";
+  }
+
+
   // validate word on Ok
   Future<bool> validate(VocabListController c, String originalWord, word) async {
 
@@ -107,8 +126,17 @@ class _VocabFormState extends State<VocabForm> {
                       Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            TextButton(onPressed: () {
+                            TextButton(onPressed: () async {
+
                               if (!wordController.text.isEmpty) {
+
+                                final prefs = await SharedPreferences.getInstance();
+                                String ttsLanguage = prefs.getString("wordTTS")!;
+                                String ttsCode = getLanguageCodeForTTS(ttsLanguage);
+                                print("ttsLanguage: "+ttsLanguage);
+                                print("ttsCode: "+ttsCode);
+
+                                widget.fluttertts.setLanguage(ttsCode);
                                 widget.fluttertts.speak(wordController.text);
                               }
                             },
@@ -154,7 +182,18 @@ class _VocabFormState extends State<VocabForm> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             TextButton(onPressed: () async {
+
+
                               if (!definitionController.text.isEmpty) {
+                                final prefs = await SharedPreferences.getInstance();
+
+                                String ttsLanguage = prefs.getString("translationTTS")!;
+
+                                String ttsCode = getLanguageCodeForTTS(ttsLanguage);
+                                print("ttsLanguage: "+ttsLanguage);
+                                print("ttsCode: "+ttsCode);
+
+                                widget.fluttertts.setLanguage(ttsCode);
                                 widget.fluttertts.speak(definitionController.text);
                               }
 

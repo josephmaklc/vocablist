@@ -5,14 +5,14 @@ Future<bool> areYouSureDialog(BuildContext context,String title,String message) 
   // set up the buttons
   bool result = false;
   Widget yesButton = TextButton(
-    child: Text("Yes"),
+    child: const Text("Yes"),
     onPressed: () {
       result = true;
       Navigator.pop(context, 'Yes');
     },
   );
   Widget noButton = TextButton(
-    child: Text("No"),
+    child: const Text("No"),
     onPressed: () {
       result = false;
       Navigator.pop(context, 'No');
