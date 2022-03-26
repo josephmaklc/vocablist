@@ -137,7 +137,7 @@ class FlashcardBackView extends StatelessWidget {
                           final prefs = await SharedPreferences.getInstance();
                           String ttsLanguage = prefs.getString("wordTTS")!;
                           String ttsCode = getLanguageCodeForTTS(ttsLanguage);
-                          doTalking(context,ttsCode,vocabInfo.definition);
+                          doTalking(context,ttsCode,vocabInfo.word);
                           //tts.speak(vocabInfo.word);
                         })
                   ]),
