@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:vocablist2/db/model/VocabInfo.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:vocablist2/talking.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void wordCardDialog(BuildContext context, VocabInfo vocabInfo) async {
   showDialog(
@@ -15,6 +17,12 @@ void wordCardDialog(BuildContext context, VocabInfo vocabInfo) async {
                 Icons.chat,
               ),
               onPressed: () async {
+
+                final prefs = await SharedPreferences.getInstance();
+                String ttsLanguage = prefs.getString("wordTTS")!;
+                String ttsCode = getLanguageCodeForTTS(ttsLanguage);
+                doTalking(context,ttsCode,vocabInfo.definition);
+
                 //tts.speak(vocabInfo.word);
 
               }, // Handle your onTap here.
@@ -32,6 +40,12 @@ void wordCardDialog(BuildContext context, VocabInfo vocabInfo) async {
                     Icons.chat,
                   ),
                   onPressed: () async {
+
+                    final prefs = await SharedPreferences.getInstance();
+                    String ttsLanguage = prefs.getString("translationTTS")!;
+                    String ttsCode = getLanguageCodeForTTS(ttsLanguage);
+                    doTalking(context,ttsCode,vocabInfo.definition);
+
                     //tts.speak(vocabInfo.definition);
 
                   }, // Handle your onTap here.

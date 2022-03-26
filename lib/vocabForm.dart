@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:vocablist2/db/model/VocabInfo.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
+import 'package:vocablist2/talking.dart';
 
 import 'db/controller/vocabListController.dart';
 import 'toast.dart';
@@ -54,23 +54,10 @@ class _VocabFormState extends State<VocabForm> {
       translationLanguage =  prefs.getString("translationLanguage")!;
       translationTTS =  prefs.getString("translationTTS")!;
 
-      widget.languagePref=prefs.getString("translationLanguage") ?? defaultLanguagePref;
+//      widget.languagePref=prefs.getString("translationLanguage") ?? defaultLanguagePref;
       //widget.languagePref = (prefs.getString('languagePref') ?? defaultLanguagePref);
     });
   }
-
-  // https://cloud.google.com/text-to-speech/docs/voices
-  String getLanguageCodeForTTS(String ttsDescription) {
-    if (ttsDescription=='English UK') return "en-GB";
-    if (ttsDescription=='English US') return "en-US";
-    if (ttsDescription=='French') return "fr-FR";
-    if (ttsDescription=='Spanish') return "es-ES";
-    if (ttsDescription=='Mandarin Chinese') return "zh-CN";
-    if (ttsDescription=='Cantonese Chinese') return "yue-HK";
-
-    return "en-US";
-  }
-
 
   // validate word on Ok
   Future<bool> validate(VocabListController c, String originalWord, word) async {
@@ -160,15 +147,15 @@ class _VocabFormState extends State<VocabForm> {
 
 
                           ElevatedButton(onPressed: () async {
-                            //print("translate");
-                            String translation = await getTranslation(context, wordController.text,widget.languagePref);
+
+                            String translation = await getTranslation(context, wordController.text,wordLanguage,translationLanguage);
 
                             setState(() {
                               widget.vocabInfo.word = wordController.text;
                               widget.vocabInfo.definition=translation;
 
                             });
-                          }, child: Text("Translate to "+widget.languagePref)),
+                          }, child: Text("Translate to "+translationLanguage)),
                         ],
                       ),
                       Padding(
@@ -179,7 +166,7 @@ class _VocabFormState extends State<VocabForm> {
                       TextFormField(
                           controller: definitionController,
                           decoration: InputDecoration(border: OutlineInputBorder()),
-                          minLines: 6, // any number you need (It works as the rows for the textarea)
+                          minLines: 4, // any number you need (It works as the rows for the textarea)
                           keyboardType: TextInputType.multiline,
                           maxLines: null
                       ),
@@ -250,34 +237,6 @@ class _VocabFormState extends State<VocabForm> {
   }
 }
 
-void doTalking(BuildContext context,String ttsCode, String text) async {
-  try {
-    FlutterTts fluttertts = FlutterTts();
-
-    fluttertts.setStartHandler(() {
-      print("playing");
-    });
-    fluttertts.setErrorHandler((message) { print("error: "+message); });
-    bool available = await fluttertts.isLanguageAvailable(ttsCode);
-    if (!available) {
-      showToast(context, "Sorry Text To Speech for "+ttsCode+" not available");
-    }
-    else {
-      //fluttertts.setLanguage(ttsCode);
-
-      print("speaking: "+text);
-      fluttertts.speak(text);
-    }
-
-  } on Exception catch (exception) {
-    // only executed if error is of type Exception
-    print("Exception! "+exception.toString());
-  } catch (error) {
-    // executed for errors of all types other than Exception
-    print("Error! "+error.toString());
-  }
-
-}
 
 void _launchURL(String _url) async {
   if (!await launch(_url)) {
@@ -285,7 +244,7 @@ void _launchURL(String _url) async {
   }
 }
 
-Future<String> getTranslation(BuildContext context, String word, String language) async {
+String bingLangCode(String language) {
   String langCode = "en";
   if (language=="Spanish")
     langCode = "es";
@@ -295,9 +254,12 @@ Future<String> getTranslation(BuildContext context, String word, String language
     langCode = "zh-CHS"; // bing
   if (language=="Traditional Chinese")
     langCode = "zh-CHT"; // bing
+  return langCode;
+}
 
-  String url = translateAPI+"&from=en&to="+langCode+"&text="+word;
-//  print("url:"+url);
+Future<String> getTranslation(BuildContext context, String word, String fromLanguage, String toLanguage) async {
+  String url = translateAPI+"&from="+bingLangCode(fromLanguage)+"&to="+bingLangCode(toLanguage)+"&text="+word;
+  print("url:"+url);
 
   try {
     final response = await http

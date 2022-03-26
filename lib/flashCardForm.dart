@@ -1,10 +1,12 @@
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
+import 'package:vocablist2/talking.dart';
 
 import 'db/model/VocabInfo.dart';
 
 import 'package:sqflite/sqflite.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FlashCardWidget extends StatefulWidget {
   List<VocabInfo> vocabList;
@@ -131,6 +133,11 @@ class FlashcardBackView extends StatelessWidget {
                           Icons.chat,
                         ),
                         onPressed: () async {
+
+                          final prefs = await SharedPreferences.getInstance();
+                          String ttsLanguage = prefs.getString("wordTTS")!;
+                          String ttsCode = getLanguageCodeForTTS(ttsLanguage);
+                          doTalking(context,ttsCode,vocabInfo.definition);
                           //tts.speak(vocabInfo.word);
                         })
                   ]),
@@ -143,6 +150,11 @@ class FlashcardBackView extends StatelessWidget {
                           Icons.chat,
                         ),
                         onPressed: () async {
+
+                          final prefs = await SharedPreferences.getInstance();
+                          String ttsLanguage = prefs.getString("translationTTS")!;
+                          String ttsCode = getLanguageCodeForTTS(ttsLanguage);
+                          doTalking(context,ttsCode,vocabInfo.definition);
 
                           //tts.speak(vocabInfo.definition);
                         })

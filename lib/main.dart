@@ -128,6 +128,7 @@ class _MyAppState extends State<MyApp> {
               ListTile(
                 leading: const Icon(Icons.note_outlined),
                 title: Text('Flash Cards',style:TextStyle(fontSize: fontSize)),
+                enabled: vocabList.length>0,
                 onTap: () async {
                   //flashCardDialog(context, tts, vocabList);
                   await Navigator.push(
