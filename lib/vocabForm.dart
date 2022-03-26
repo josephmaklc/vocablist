@@ -17,10 +17,9 @@ class VocabForm extends StatefulWidget {
   VocabInfo vocabInfo;
   String languagePref=defaultLanguagePref;
   Database db;
-  FlutterTts fluttertts;
 //  String errorMessage="";
 
-  VocabForm({Key? key, required this.vocabInfo, required this.db, required this.fluttertts}) : super(key: key);
+  VocabForm({Key? key, required this.vocabInfo, required this.db}) : super(key: key);
 
   @override
   _VocabFormState createState() => _VocabFormState();
@@ -36,6 +35,11 @@ class _VocabFormState extends State<VocabForm> {
     _doInit();
   }
 
+  String wordLanguage = "";
+  String wordTTS="";
+  String translationLanguage="";
+  String translationTTS = "";
+
   void _doInit() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -44,6 +48,12 @@ class _VocabFormState extends State<VocabForm> {
       print("wordTTS:"+ prefs.getString("wordTTS")!);
       print("translationLanguage:"+ prefs.getString("translationLanguage")!);
       print("translationTTS:"+ prefs.getString("translationTTS")!);
+
+      wordLanguage =  prefs.getString("wordLanguage")!;
+      wordTTS =  prefs.getString("wordTTS")!;
+      translationLanguage =  prefs.getString("translationLanguage")!;
+      translationTTS =  prefs.getString("translationTTS")!;
+
       widget.languagePref=prefs.getString("translationLanguage") ?? defaultLanguagePref;
       //widget.languagePref = (prefs.getString('languagePref') ?? defaultLanguagePref);
     });
@@ -51,20 +61,14 @@ class _VocabFormState extends State<VocabForm> {
 
   // https://cloud.google.com/text-to-speech/docs/voices
   String getLanguageCodeForTTS(String ttsDescription) {
-    if (ttsDescription=='English UK (Female)') return "en-GB-Standard-A";
-    if (ttsDescription=='English UK (Male)') return "en-GB-Standard-B";
-    if (ttsDescription=='English US (Female)') return "en-US-Standard-A";
-    if (ttsDescription=='English US (Male)') return "en-US-Standard-B";
-    if (ttsDescription=='French (Female)') return "fr-FR-Standard-A";
-    if (ttsDescription=='French (Male)') return "fr-FR-Standard-B";
-    if (ttsDescription=='Spanish (Female)') return "es-ES-Standard-A";
-    if (ttsDescription=='Spanish (Male)') return "es-ES-Standard-B";
-    if (ttsDescription=='Mandarin Chinese (Female)') return "cmn-CN-Standard-A";
-    if (ttsDescription=='Mandarin Chinese (Male)') return "cmn-CN-Standard-B";
-    if (ttsDescription=='Cantonese Chinese (Female)') return "yue-HK-Standard-A";
-    if (ttsDescription=='Cantonese Chinese (Male)') return "yue-HK-Standard-B";
-    print("oh tts description is: "+ttsDescription);
-    return "en-GB-Standard-A";
+    if (ttsDescription=='English UK') return "en-GB";
+    if (ttsDescription=='English US') return "en-US";
+    if (ttsDescription=='French') return "fr-FR";
+    if (ttsDescription=='Spanish') return "es-ES";
+    if (ttsDescription=='Mandarin Chinese') return "zh-CN";
+    if (ttsDescription=='Cantonese Chinese') return "yue-HK";
+
+    return "en-US";
   }
 
 
@@ -116,7 +120,7 @@ class _VocabFormState extends State<VocabForm> {
                     children: <Widget>[
                       Padding(
                         padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                        child: Text("Word:", textAlign: TextAlign.left),
+                        child: Text("Word ("+wordLanguage+")", textAlign: TextAlign.left),
                       ),
                       TextFormField(
                           autofocus: true,
@@ -136,11 +140,12 @@ class _VocabFormState extends State<VocabForm> {
                                 print("ttsLanguage: "+ttsLanguage);
                                 print("ttsCode: "+ttsCode);
 
-                                widget.fluttertts.setLanguage(ttsCode);
-                                widget.fluttertts.speak(wordController.text);
+                                doTalking(context, ttsCode,wordController.text);
+
+
                               }
                             },
-                                child:Text("Pronounce")),
+                                child:Text("Pronounce in "+wordTTS)),
                             TextButton(onPressed: () {
                               _launchURL("https://en.wiktionary.org/wiki/"+wordController.text);
                             },
@@ -193,11 +198,11 @@ class _VocabFormState extends State<VocabForm> {
                                 print("ttsLanguage: "+ttsLanguage);
                                 print("ttsCode: "+ttsCode);
 
-                                widget.fluttertts.setLanguage(ttsCode);
-                                widget.fluttertts.speak(definitionController.text);
+                                doTalking(context, ttsCode, definitionController.text);
+
                               }
 
-                            }, child: Text("Pronounce")),
+                            }, child: Text("Pronounce in "+translationTTS)),
                           ]),
 
                       Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -243,6 +248,35 @@ class _VocabFormState extends State<VocabForm> {
 
     );
   }
+}
+
+void doTalking(BuildContext context,String ttsCode, String text) async {
+  try {
+    FlutterTts fluttertts = FlutterTts();
+
+    fluttertts.setStartHandler(() {
+      print("playing");
+    });
+    fluttertts.setErrorHandler((message) { print("error: "+message); });
+    bool available = await fluttertts.isLanguageAvailable(ttsCode);
+    if (!available) {
+      showToast(context, "Sorry Text To Speech for "+ttsCode+" not available");
+    }
+    else {
+      //fluttertts.setLanguage(ttsCode);
+
+      print("speaking: "+text);
+      fluttertts.speak(text);
+    }
+
+  } on Exception catch (exception) {
+    // only executed if error is of type Exception
+    print("Exception! "+exception.toString());
+  } catch (error) {
+    // executed for errors of all types other than Exception
+    print("Error! "+error.toString());
+  }
+
 }
 
 void _launchURL(String _url) async {
@@ -291,7 +325,7 @@ Future<String> getTranslation(BuildContext context, String word, String language
       throw Exception('Failed to call translation API');
     }
   } catch (Exception) {
-    print("bam");
+    print("can't get translation: "+url);
     showToast(context, "Sorry, cannot get translation");
     throw Exception;
   }

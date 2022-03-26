@@ -20,32 +20,30 @@ List<String> availableLanguages = <String>[
 
 List<String> getTTSForLanguage(String language) {
   if (language == "English") {
-    return <String>['English US (Female)', 'English US (Male)', 'English UK (Female)','English UK (Male)'];
+    return <String>['English US', 'English UK'];
   }
   if (language == "Spanish") {
-    return <String>['Spanish (Female)', 'Spanish (Male)'];
+    return <String>['Spanish'];
   }
-  if (language == "French") return <String>['French (Female)', 'French (Male)'];
+  if (language == "French") return <String>['French'];
 
   if (language == "Traditional Chinese" || language == "Simplified Chinese") {
     return <String>[
-      'Mandarin Chinese (Female)',
-      'Mandarin Chinese (Male)',
-      'Cantonese Chinese (Female)',
-      'Cantonese Chinese (Male)'
+      'Mandarin Chinese',
+      'Cantonese Chinese',
     ];
   }
   return <String>['Not available'];
 }
 
 String getDefaultTTSForLanguage(String language) {
-  if (language == "English") return 'English US (Female)';
-  if (language == "Spanish") return 'Spanish (Female)';
-  if (language == "French") return 'French (Female)';
+  if (language == "English") return 'English US';
+  if (language == "Spanish") return 'Spanish';
+  if (language == "French") return 'French';
   if (language == "Traditional Chinese" || language == "Simplified Chinese") {
-    return 'Cantonese Chinese (Female)';
+    return 'Cantonese Chinese';
   }
-  return 'English US (Female)';
+  return 'English US';
 }
 
 Future<ConfigInfo> showConfigurationDialog(

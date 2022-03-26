@@ -35,12 +35,12 @@ dependencies:
   cupertino_icons: ^1.0.2
   flip_card: ^0.6.0
   swiping_card_deck:
+  flutter_tts:
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   sqflite: any
-  flutter_tts:
   url_launcher:
   http:
   shared_preferences:

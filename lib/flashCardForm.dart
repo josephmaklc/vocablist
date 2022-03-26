@@ -9,13 +9,12 @@ import 'package:flutter_tts/flutter_tts.dart';
 class FlashCardWidget extends StatefulWidget {
   List<VocabInfo> vocabList;
   Database db;
-  FlutterTts fluttertts;
 
   FlashCardWidget(
       {Key? key,
       required this.vocabList,
-      required this.db,
-      required this.fluttertts})
+      required this.db
+      })
       : super(key: key);
 
   @override
@@ -51,8 +50,8 @@ class _MyFlashCardState extends State<FlashCardWidget> {
                       vocabInfo: _flashcards[_currentIndex],
                     ),
                     back: FlashcardBackView(
-                      vocabInfo: _flashcards[_currentIndex],
-                      tts: widget.fluttertts
+                      vocabInfo: _flashcards[_currentIndex]
+
                     ))),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -112,9 +111,8 @@ class FlashcardView extends StatelessWidget {
 
 class FlashcardBackView extends StatelessWidget {
   final Flashcard vocabInfo;
-  final FlutterTts tts;
 
-  FlashcardBackView({required this.vocabInfo, required this.tts});
+  FlashcardBackView({required this.vocabInfo});
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +131,7 @@ class FlashcardBackView extends StatelessWidget {
                           Icons.chat,
                         ),
                         onPressed: () async {
-                          tts.speak(vocabInfo.word);
+                          //tts.speak(vocabInfo.word);
                         })
                   ]),
               Row(
@@ -145,8 +143,8 @@ class FlashcardBackView extends StatelessWidget {
                           Icons.chat,
                         ),
                         onPressed: () async {
-                          tts.setLanguage("yue-HK-Standard-A");
-                          tts.speak(vocabInfo.definition);
+
+                          //tts.speak(vocabInfo.definition);
                         })
                   ])
             ])

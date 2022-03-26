@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vocablist2/db/model/VocabInfo.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
-void wordCardDialog(BuildContext context, FlutterTts tts, VocabInfo vocabInfo) async {
+void wordCardDialog(BuildContext context, VocabInfo vocabInfo) async {
   showDialog(
     context: context,
     builder: (context) {
@@ -15,7 +15,7 @@ void wordCardDialog(BuildContext context, FlutterTts tts, VocabInfo vocabInfo) a
                 Icons.chat,
               ),
               onPressed: () async {
-                tts.speak(vocabInfo.word);
+                //tts.speak(vocabInfo.word);
 
               }, // Handle your onTap here.
             )]),
@@ -32,7 +32,7 @@ void wordCardDialog(BuildContext context, FlutterTts tts, VocabInfo vocabInfo) a
                     Icons.chat,
                   ),
                   onPressed: () async {
-                    tts.speak(vocabInfo.definition);
+                    //tts.speak(vocabInfo.definition);
 
                   }, // Handle your onTap here.
               )

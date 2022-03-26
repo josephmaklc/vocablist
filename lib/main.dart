@@ -12,7 +12,7 @@ import 'db/controller/vocabListController.dart';
 import 'db/model/VocabInfo.dart';
 import 'dart:async';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:flutter_tts/flutter_tts.dart';
+
 import 'configDialog.dart';
 import 'flashCardDialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -76,7 +76,7 @@ class _MyAppState extends State<MyApp> {
         future: _getThingsOnStartup(),
         builder: (context, AsyncSnapshot<List<VocabInfo>> snapshot) {
           if (snapshot.hasData) {
-           vocabList = snapshot.data as List<VocabInfo>;
+            vocabList = snapshot.data as List<VocabInfo>;
 
             return vocabListScaffold(context,vocabList);
           } else {
@@ -87,7 +87,6 @@ class _MyAppState extends State<MyApp> {
 
   }
 
-  final FlutterTts tts = FlutterTts();
   Scaffold vocabListScaffold(BuildContext context, List<VocabInfo> vocabList) {
 
     return Scaffold(
@@ -133,30 +132,30 @@ class _MyAppState extends State<MyApp> {
                   //flashCardDialog(context, tts, vocabList);
                   await Navigator.push(
                       context,
-                  MaterialPageRoute(builder: (context) => FlashCardWidget(vocabList: vocabList, fluttertts: tts, db: db)));
+                      MaterialPageRoute(builder: (context) => FlashCardWidget(vocabList: vocabList, db: db)));
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.settings),
-                title: Text('Settings',style:TextStyle(fontSize: fontSize)),
-                onTap: () async {
-                  ConfigInfo result = await showConfigurationDialog(context, wordLanguage, wordTTS, translationLanguage, translationTTS);
-                  final prefs = await SharedPreferences.getInstance();
+                  leading: const Icon(Icons.settings),
+                  title: Text('Settings',style:TextStyle(fontSize: fontSize)),
+                  onTap: () async {
+                    ConfigInfo result = await showConfigurationDialog(context, wordLanguage, wordTTS, translationLanguage, translationTTS);
+                    final prefs = await SharedPreferences.getInstance();
 
-                  setState(() {
-                    wordLanguage = result.wordLanguage;
-                    wordTTS = result.wordTTS;
-                    translationLanguage = result.translationLanguage;
-                    translationTTS = result.translationTTS;
-                    prefs.setString("wordLanguage",wordLanguage);
-                    prefs.setString("wordTTS",wordTTS);
-                    prefs.setString("translationLanguage",translationLanguage);
-                    prefs.setString("translationTTS",translationTTS);
-                  });
+                    setState(() {
+                      wordLanguage = result.wordLanguage;
+                      wordTTS = result.wordTTS;
+                      translationLanguage = result.translationLanguage;
+                      translationTTS = result.translationTTS;
+                      prefs.setString("wordLanguage",wordLanguage);
+                      prefs.setString("wordTTS",wordTTS);
+                      prefs.setString("translationLanguage",translationLanguage);
+                      prefs.setString("translationTTS",translationTTS);
+                    });
 
 
-                  Navigator.pop(context);
-                }
+                    Navigator.pop(context);
+                  }
 
               ),
               ListTile(
@@ -182,9 +181,9 @@ class _MyAppState extends State<MyApp> {
             ListTile item = ListTile(
 
 
-              title: Text(vocabList[index].word,style:TextStyle(fontSize: fontSize)),
+                title: Text(vocabList[index].word,style:TextStyle(fontSize: fontSize)),
                 onTap: () {
-                  wordCardDialog(context, tts, vocabList[index]);
+                  wordCardDialog(context, vocabList[index]);
                 },
                 trailing: Wrap(
 
@@ -199,7 +198,7 @@ class _MyAppState extends State<MyApp> {
 
                         await Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => VocabForm(vocabInfo: vocabList[index], fluttertts: tts, db: db)));
+                            MaterialPageRoute(builder: (context) => VocabForm(vocabInfo: vocabList[index], db: db)));
 
                         var refreshedList=await _getThingsOnStartup();
                         setState(() {
@@ -234,21 +233,21 @@ class _MyAppState extends State<MyApp> {
         ),
 
         floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-         //await showVocabularyDialog(context, db, tts, new VocabInfo(id: 0, word: "", definition: ""));
-          await Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => VocabForm(vocabInfo:  new VocabInfo(id: 0, word: "", definition: ""), fluttertts: tts, db: db)));
+          onPressed: () async {
+            //await showVocabularyDialog(context, db, tts, new VocabInfo(id: 0, word: "", definition: ""));
+            await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => VocabForm(vocabInfo:  new VocabInfo(id: 0, word: "", definition: ""), db: db)));
 
-          var refreshedList=await _getThingsOnStartup();
-         setState(() {
-           vocabList=refreshedList;
-         });
+            var refreshedList=await _getThingsOnStartup();
+            setState(() {
+              vocabList=refreshedList;
+            });
 
 
-        },
-        child: const Icon(Icons.add),
-    )
+          },
+          child: const Icon(Icons.add),
+        )
 
     );
   }
