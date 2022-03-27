@@ -131,6 +131,8 @@ class _MyAppState extends State<MyApp> {
                 enabled: vocabList.length>0,
                 onTap: () async {
                   //flashCardDialog(context, tts, vocabList);
+                  showToast(context,"Tap on card to flip card");
+
                   await Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => FlashCardWidget(vocabList: vocabList, db: db)));

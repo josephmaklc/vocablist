@@ -25,27 +25,34 @@ class FlashCardWidget extends StatefulWidget {
 
 class _MyFlashCardState extends State<FlashCardWidget> {
   int _currentIndex = 0;
-
   List<Flashcard> _flashcards = [];
+  double WIDTH = 250;
+  double HEIGHT = 200;
 
   @override
-  Widget build(BuildContext context) {
-    // turn list into array for use with FlipCard
+  void initState() {
+    super.initState();
+
     for (VocabInfo vocabInfo in widget.vocabList) {
       _flashcards.add(
           Flashcard(word: vocabInfo.word, definition: vocabInfo.definition));
     }
     _flashcards.shuffle();
 
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // turn list into array for use with FlipCard
     return Scaffold(
-      appBar: AppBar(title: Text("Flash Card")),
+      appBar: AppBar(title: Text("Flash Cards")),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-                width: 250,
-                height: 250,
+                width: WIDTH,
+                height: HEIGHT,
                 child: FlipCard(
                     direction: FlipDirection.HORIZONTAL,
                     front: FlashcardView(
