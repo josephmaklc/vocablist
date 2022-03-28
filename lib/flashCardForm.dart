@@ -44,36 +44,63 @@ class _MyFlashCardState extends State<FlashCardWidget> {
   @override
   Widget build(BuildContext context) {
     // turn list into array for use with FlipCard
+    String dir="";
     return Scaffold(
       appBar: AppBar(title: Text("Flash Cards")),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-                width: WIDTH,
-                height: HEIGHT,
-                child: FlipCard(
-                    direction: FlipDirection.HORIZONTAL,
-                    front: FlashcardView(
-                      vocabInfo: _flashcards[_currentIndex],
-                    ),
-                    back: FlashcardBackView(
-                      vocabInfo: _flashcards[_currentIndex]
+      body:
+      GestureDetector(
+        onPanUpdate: (details) {
+          // Swiping in left direction.
+          if (details.delta.dx < 0) {
+            //print("left");
+            dir="left";
+          //  showPreviousCard();
+          }
 
-                    ))),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+          // Swiping in right direction.
+          if (details.delta.dx > 0) {
+            //print("right");
+            dir="right";
+            //showNextCard();
+          }
+        },
+        onPanEnd: (dragEndDetails) {
+          //print("end");
+          if (dir=="left") showPreviousCard();
+          if (dir=="right") showNextCard();
+        },
+        child:
+
+
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ElevatedButton(
-                    onPressed: showPreviousCard, child: Text('< Prev')),
-                ElevatedButton(onPressed: showNextCard, child: Text('Next >')),
+                SizedBox(
+                    width: WIDTH,
+                    height: HEIGHT,
+                    child: FlipCard(
+                        direction: FlipDirection.HORIZONTAL,
+                        front: FlashcardView(
+                          vocabInfo: _flashcards[_currentIndex],
+                        ),
+                        back: FlashcardBackView(
+                          vocabInfo: _flashcards[_currentIndex]
+
+                        ))),
+                /*Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    ElevatedButton(
+                        onPressed: showPreviousCard, child: Text('< Prev')),
+                    ElevatedButton(onPressed: showNextCard, child: Text('Next >')),
+                  ],
+                )*/
               ],
-            )
-          ],
-        ),
-      ),
-    );
+            ),
+          )
+    ));
+
   }
 
   void showNextCard() {

@@ -58,11 +58,10 @@ class _MyAppState extends State<MyApp> {
     final prefs = await SharedPreferences.getInstance();
 
     setState(() {
-      print("setting init language pref");
       wordLanguage = (prefs.getString('wordLanguage') ?? "English");
-      wordTTS = (prefs.getString('wordTTS') ?? "English US (Female)");
+      wordTTS = (prefs.getString('wordTTS') ?? "English US");
       translationLanguage = (prefs.getString('translationLanguage') ?? "Traditional Chinese");
-      translationTTS = (prefs.getString('translationTTS') ?? "Cantonese Chinese (Female)");
+      translationTTS = (prefs.getString('translationTTS') ?? "Cantonese Chinese");
 
     });
   }
@@ -131,7 +130,7 @@ class _MyAppState extends State<MyApp> {
                 enabled: vocabList.length>0,
                 onTap: () async {
                   //flashCardDialog(context, tts, vocabList);
-                  showToast(context,"Tap on card to flip card");
+                  showToast(context,"Tap on card to flip card, swipe for another card");
 
                   await Navigator.push(
                       context,
