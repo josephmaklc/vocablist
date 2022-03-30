@@ -5,6 +5,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:vocablist2/aboutDialog.dart';
 import 'package:vocablist2/areYouSureDialog.dart';
 import 'package:vocablist2/flashCardForm.dart';
+import 'package:vocablist2/quiz.dart';
 import 'package:vocablist2/toast.dart';
 import 'package:vocablist2/vocabForm.dart';
 import 'package:vocablist2/wordCardDialog.dart';
@@ -134,7 +135,18 @@ class _MyAppState extends State<MyApp> {
 
                   await Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => FlashCardWidget(vocabList: vocabList, db: db)));
+                      MaterialPageRoute(builder: (context) => FlashCardWidget(vocabList: vocabList)));
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.list_alt),
+                title: Text('Quiz',style:TextStyle(fontSize: fontSize)),
+                enabled: vocabList.length>1,
+                onTap: () async {
+
+                  await Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => QuizForm(vocabList: vocabList)));
                 },
               ),
               ListTile(

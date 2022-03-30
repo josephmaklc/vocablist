@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import 'package:vocablist2/talking.dart';
 
+import 'configDialog.dart';
 import 'db/controller/vocabListController.dart';
 import 'toast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -92,8 +93,32 @@ class _VocabFormState extends State<VocabForm> {
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () {
                   Navigator.pop(context);
-                })
-        ),
+                }),
+
+                actions:<Widget>[
+
+                  IconButton(
+                    icon: const Icon(Icons.settings),
+                    onPressed: () async {
+                      ConfigInfo result = await showConfigurationDialog(
+                          context, wordLanguage, wordTTS, translationLanguage,
+                          translationTTS);
+                      final prefs = await SharedPreferences.getInstance();
+
+                      setState(() {
+                        wordLanguage = result.wordLanguage;
+                        wordTTS = result.wordTTS;
+                        translationLanguage = result.translationLanguage;
+                        translationTTS = result.translationTTS;
+                        prefs.setString("wordLanguage", wordLanguage);
+                        prefs.setString("wordTTS", wordTTS);
+                        prefs.setString(
+                            "translationLanguage", translationLanguage);
+                        prefs.setString("translationTTS", translationTTS);
+                      });
+                    }
+                 )
+                ]),
 
         body:
         Container(

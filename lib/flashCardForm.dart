@@ -4,18 +4,14 @@ import 'package:vocablist2/talking.dart';
 
 import 'db/model/VocabInfo.dart';
 
-import 'package:sqflite/sqflite.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FlashCardWidget extends StatefulWidget {
   List<VocabInfo> vocabList;
-  Database db;
 
   FlashCardWidget(
       {Key? key,
       required this.vocabList,
-      required this.db
       })
       : super(key: key);
 
