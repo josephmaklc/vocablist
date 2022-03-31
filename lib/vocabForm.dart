@@ -191,7 +191,7 @@ class _VocabFormState extends State<VocabForm> {
                       TextFormField(
                           controller: definitionController,
                           decoration: InputDecoration(border: OutlineInputBorder()),
-                          minLines: 4, // any number you need (It works as the rows for the textarea)
+                          minLines: 3, // any number you need (It works as the rows for the textarea)
                           keyboardType: TextInputType.multiline,
                           maxLines: null
                       ),

@@ -141,7 +141,7 @@ class _MyAppState extends State<MyApp> {
               ListTile(
                 leading: const Icon(Icons.list_alt),
                 title: Text('Quiz',style:TextStyle(fontSize: fontSize)),
-                enabled: vocabList.length>1,
+                enabled: vocabList.length>3,
                 onTap: () async {
 
                   await Navigator.push(
