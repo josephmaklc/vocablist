@@ -6,8 +6,6 @@ import 'package:vocablist2/toast.dart';
 
 import 'db/model/VocabInfo.dart';
 
-enum SingingCharacter { lafayette, jefferson }
-
 class QuizForm extends StatefulWidget {
   List<VocabInfo> vocabList;
 
@@ -21,11 +19,12 @@ class QuizQuestion {
   String text="";
   List<String> choice = ['','','',''];
   int correct=0;
+  String userAnswered="";
 }
 
 class _QuizFormState extends State<QuizForm> {
-  SingingCharacter? _character = SingingCharacter.lafayette;
 
+  //String choiceSelection="";
   int whereAt=0;
 
   int score=0;
@@ -49,9 +48,9 @@ class _QuizFormState extends State<QuizForm> {
   }
 
   Future<List<QuizQuestion>> _getThingsOnStartup() async {
-    print("do Init");
 
     if (quizList.length>0) return quizList;
+    print("do Init");
 
     List<QuizQuestion> questions = [];
 
@@ -97,9 +96,6 @@ class _QuizFormState extends State<QuizForm> {
         builder: (context, AsyncSnapshot<List<QuizQuestion>> snapshot) {
           if (snapshot.hasData) {
             quizList = snapshot.data!;
-
-
-
             return quizScaffold(context, quizList);
           } else {
             return const CircularProgressIndicator();
@@ -111,85 +107,109 @@ class _QuizFormState extends State<QuizForm> {
   Scaffold quizScaffold(BuildContext context, List<QuizQuestion> quizList) {
     QuizQuestion question = quizList[whereAt];
     return Scaffold(
-      appBar:
-      AppBar(title: Text("Quiz"),
+        appBar:
+        AppBar(title: Text("Quiz"),
           leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
                 Navigator.pop(context);
               }),
-      ),
-      body:
-      Container(
-        padding: const EdgeInsets.all(12.0),
+        ),
+        body:
+        Container(
+            padding: const EdgeInsets.all(12.0),
 
-        child: SingleChildScrollView(
-            child:
-             Column(
-              children: <Widget>[
-                Text(question.text),
-                ListTile(
-                  title: Text(question.choice[0]),
-                  leading: Radio<SingingCharacter>(
-                    value: SingingCharacter.lafayette,
-                    groupValue: _character,
-                    onChanged: (SingingCharacter? value) {
-                      setState(() {
-                        _character = value;
-                      });
-                    },
-                  ),
-                ),
-                ListTile(
-                  title: Text(question.choice[1]),
-                  leading: Radio<SingingCharacter>(
-                    value: SingingCharacter.jefferson,
-                    groupValue: _character,
-                    onChanged: (SingingCharacter? value) {
-                      setState(() {
-                        _character = value;
-                      });
-                    },
-                  ),
-                ),
-                ListTile(
-                  title: Text(question.choice[2]),
-                  leading: Radio<SingingCharacter>(
-                    value: SingingCharacter.lafayette,
-                    groupValue: _character,
-                    onChanged: (SingingCharacter? value) {
-                      setState(() {
-                        _character = value;
-                      });
-                    },
-                  ),
-                ),
-                ListTile(
-                  title: Text(question.choice[3]),
-                  leading: Radio<SingingCharacter>(
-                    value: SingingCharacter.lafayette,
-                    groupValue: _character,
-                    onChanged: (SingingCharacter? value) {
-                      setState(() {
-                        _character = value;
-                      });
-                    },
-                  ),
-                ),
-                ElevatedButton(onPressed: (){
-                  print("check choice");
-                  setState(() {
-                    if (whereAt==quizList.length) {
-                      showToast(context,"Game over");
-                      return;
-                    }
-                    whereAt++;
-                    print("whereAt="+whereAt.toString());
+            child: SingleChildScrollView(
+                child:
+                Column(
+                    children: <Widget>[
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text((whereAt + 1).toString() + ": " + question.text,
+                                style:TextStyle(fontSize:20))
+                         ]
+                      ),
+                      ListTile(
+                        title: Text(question.choice[0]),
+                        leading: Radio<String>(
+                          value: question.choice[0],
+                          groupValue: question.userAnswered,
+                          onChanged: (String? value) {
+                            setState(() {
+                              question.userAnswered = value!;
+                            });
+                          },
+                        ),
+                      ),
+                      ListTile(
+                        title: Text(question.choice[1]),
+                        leading: Radio<String>(
+                          value: question.choice[1],
+                          groupValue: question.userAnswered,
+                          onChanged: (String? value) {
+                            setState(() {
+                              question.userAnswered = value!;
+                            });
+                          },
+                        ),
+                      ),
+                      ListTile(
+                        title: Text(question.choice[2]),
+                        leading: Radio<String>(
+                          value: question.choice[2],
+                          groupValue: question.userAnswered,
+                          onChanged: (String? value) {
+                            setState(() {
+                              question.userAnswered = value!;
+                            });
+                          },
+                        ),
+                      ),
+                      ListTile(
+                        title: Text(question.choice[3]),
+                        leading: Radio<String>(
+                          value: question.choice[3],
+                          groupValue: question.userAnswered,
+                          onChanged: (String? value) {
+                            setState(() {
+                              question.userAnswered = value!;
+                            });
+                          },
+                        ),
+                      ),
 
-                  });
-                }, child: Text("Ok"))
-              ],
-            ))
-    ));
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+
+                            ElevatedButton(onPressed: () {
+                              setState(() {
+                                if (whereAt == 0)
+                                  showToast(context,
+                                      "Cannot go previous question");
+                                else {
+                                  whereAt--;
+                                  print("whereAt=" + whereAt.toString());
+                                }
+                              });
+                            }, child: Text("<")),
+
+                            ElevatedButton(onPressed: () {
+                              print("check choice");
+                              //print("selected: "+choiceSelection+" correct answer: "+question.correct.toString());
+                              setState(() {
+                                if (whereAt == quizList.length - 1) {
+                                  showToast(context, "Game over");
+                                  return;
+                                }
+                                //if (choiceSelection==question.correct) score++;
+                                whereAt++;
+                                print("whereAt=" + whereAt.toString() +
+                                    " score: " + score.toString());
+                              });
+                            }, child: Text(">"))
+                          ])
+                    ]))));
   }
 }
