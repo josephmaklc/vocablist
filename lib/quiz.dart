@@ -183,30 +183,18 @@ class _QuizFormState extends State<QuizForm> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
 
-                            ElevatedButton(onPressed: () {
+                            ElevatedButton(onPressed: whereAt==0 ? null : () {
+
                               setState(() {
-                                if (whereAt == 0)
-                                  showToast(context,
-                                      "Cannot go previous question");
-                                else {
                                   whereAt--;
-                                  print("whereAt=" + whereAt.toString());
-                                }
-                              });
+                                });
+
                             }, child: Text("<")),
 
-                            ElevatedButton(onPressed: () {
-                              print("check choice");
+                            ElevatedButton(onPressed: whereAt == quizList.length - 1 ? null : () {
                               //print("selected: "+choiceSelection+" correct answer: "+question.correct.toString());
                               setState(() {
-                                if (whereAt == quizList.length - 1) {
-                                  showToast(context, "Game over");
-                                  return;
-                                }
-                                //if (choiceSelection==question.correct) score++;
                                 whereAt++;
-                                print("whereAt=" + whereAt.toString() +
-                                    " score: " + score.toString());
                               });
                             }, child: Text(">"))
                           ])
