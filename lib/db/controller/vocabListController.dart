@@ -26,7 +26,7 @@ class VocabListController {
       // When the database is first created, create a table to store dogs.
       onCreate: (db, version) {
         // Run the CREATE TABLE statement on the database.
-        print("on create...");
+        //print("on create...");
         return db.execute(
           'CREATE TABLE vocabulary(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, word TEXT, definition TEXT) ',
         );
@@ -39,7 +39,7 @@ class VocabListController {
   }
 
   Future<void> clearVocabListTable(var db) async {
-    print("clear vocabulary table");
+    //print("clear vocabulary table");
     try {
       db.execute("DROP TABLE vocabulary");
       db.execute(
@@ -113,7 +113,7 @@ class VocabListController {
       return (result.isNotEmpty);
       }
     catch (e) {
-      print ("Error doesWordExistAlready: "+e.toString());
+      //print ("Error doesWordExistAlready: "+e.toString());
       return false;
     }
   }
@@ -130,7 +130,7 @@ class VocabListController {
 
       ); }
     catch (e) {
-      print ("Error getWord: "+e.toString());
+      //print ("Error getWord: "+e.toString());
       return VocabInfo(id:i,word:'bad',definition:'badbad');
     }
   }

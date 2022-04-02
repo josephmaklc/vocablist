@@ -20,6 +20,7 @@ class QuizQuestion {
   List<String> choice = ['','','',''];
   int correct=0;
   String userAnswered="";
+  bool checkedAnswer=false;
 }
 
 class _QuizFormState extends State<QuizForm> {
@@ -50,7 +51,7 @@ class _QuizFormState extends State<QuizForm> {
   Future<List<QuizQuestion>> _getThingsOnStartup() async {
 
     if (quizList.length>0) return quizList;
-    print("do Init");
+    //print("do Init");
 
     List<QuizQuestion> questions = [];
 
@@ -76,7 +77,7 @@ class _QuizFormState extends State<QuizForm> {
       i++;
     }
     questions.shuffle();
-
+    /*
     for (QuizQuestion q in questions) {
       print("question text: "+q.text);
       print("correct: "+q.correct.toString());
@@ -85,6 +86,7 @@ class _QuizFormState extends State<QuizForm> {
       }
       print("------------");
     }
+    */
     return questions;
   }
 
@@ -102,6 +104,19 @@ class _QuizFormState extends State<QuizForm> {
           }
         }
     );
+  }
+
+  Color _determineColor(QuizQuestion q, int choice) {
+    if (!q.checkedAnswer) return Colors.white;
+    if (q.userAnswered.isEmpty) return Colors.white;
+    if (q.correct==choice) return Colors.green;
+    return Colors.white;
+  }
+
+  bool _disableCheckAnswer(QuizQuestion q) {
+    if (q.checkedAnswer) return true;
+    if (q.userAnswered.isEmpty) return true;
+    return false;
   }
 
   Scaffold quizScaffold(BuildContext context, List<QuizQuestion> quizList) {
@@ -131,18 +146,18 @@ class _QuizFormState extends State<QuizForm> {
                          ]
                       ),
                       ListTile(
-                        /*
+
                           shape: RoundedRectangleBorder(
                             side: BorderSide(
-                              color: Colors.green.shade300,
+                              color: _determineColor(question,0)
                             ),
                             borderRadius: BorderRadius.circular(15.0),
-                          ), */
+                          ),
                         title: Text(question.choice[0]),
                         leading: Radio<String>(
                           value: question.choice[0],
                           groupValue: question.userAnswered,
-                          onChanged: (String? value) {
+                          onChanged: question.checkedAnswer?null: (String? value) {
                             setState(() {
                               question.userAnswered = value!;
                             });
@@ -150,11 +165,18 @@ class _QuizFormState extends State<QuizForm> {
                         ),
                       ),
                       ListTile(
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                              color: _determineColor(question,1)
+                          ),
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
                         title: Text(question.choice[1]),
                         leading: Radio<String>(
+
                           value: question.choice[1],
                           groupValue: question.userAnswered,
-                          onChanged: (String? value) {
+                          onChanged: question.checkedAnswer?null:  (String? value) {
                             setState(() {
                               question.userAnswered = value!;
                             });
@@ -162,11 +184,17 @@ class _QuizFormState extends State<QuizForm> {
                         ),
                       ),
                       ListTile(
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                              color: _determineColor(question,2)
+                          ),
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
                         title: Text(question.choice[2]),
                         leading: Radio<String>(
                           value: question.choice[2],
                           groupValue: question.userAnswered,
-                          onChanged: (String? value) {
+                          onChanged: question.checkedAnswer?null:  (String? value) {
                             setState(() {
                               question.userAnswered = value!;
                             });
@@ -174,11 +202,17 @@ class _QuizFormState extends State<QuizForm> {
                         ),
                       ),
                       ListTile(
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                              color: _determineColor(question,3)
+                          ),
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
                         title: Text(question.choice[3]),
                         leading: Radio<String>(
                           value: question.choice[3],
                           groupValue: question.userAnswered,
-                          onChanged: (String? value) {
+                          onChanged: question.checkedAnswer?null:  (String? value) {
                             setState(() {
                               question.userAnswered = value!;
                             });
@@ -198,14 +232,21 @@ class _QuizFormState extends State<QuizForm> {
 
                             }, child: Text("<")),
                             ElevatedButton(
-                                child: const Icon(Icons.check),
-                              onPressed: question.userAnswered.isEmpty ? null : () {
+                                child: Text("Check Answer"),
+                              onPressed: _disableCheckAnswer(question) ? null : () {
+
+                                setState(() {
+                                  question.checkedAnswer=true;
+                                });
 
                               if (question.userAnswered==question.choice[question.correct]) {
                                 showToast(context, "You are right!");
+                                setState(() {
+                                  score++;
+                                });
                               }
                               else {
-                                showToast(context, "You are wrong!");
+                                showToast(context, "Sorry, wrong answer");
                               }
 
 
@@ -216,7 +257,14 @@ class _QuizFormState extends State<QuizForm> {
                                 whereAt++;
                               });
                             }, child: Text(">"))
-                          ])
+                          ]),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children:[
+                            Text("\nScore: "+score.toString()+"/"+quizList.length.toString(),  style:TextStyle(fontSize:20)),
+                          ]
+
+                      )
                     ]))));
   }
 }

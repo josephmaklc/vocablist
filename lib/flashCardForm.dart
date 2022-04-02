@@ -42,7 +42,7 @@ class _MyFlashCardState extends State<FlashCardWidget> {
     // turn list into array for use with FlipCard
     String dir="";
     return Scaffold(
-      appBar: AppBar(title: Text("Flash Cards")),
+      appBar: AppBar(title: const Text("Flash Cards")),
       body:
       GestureDetector(
         onPanUpdate: (details) {
@@ -72,11 +72,8 @@ class _MyFlashCardState extends State<FlashCardWidget> {
           children: <Widget>[
             Expanded(
               flex: 1,
-              child: Container(
-                child:
-                ElevatedButton(
-                    onPressed: showPreviousCard, child: Text('<'))
-              ),
+              child: ElevatedButton(
+                  onPressed: showPreviousCard, child: Text('<')),
             ),
             Expanded(
               flex: 7,
@@ -100,10 +97,7 @@ class _MyFlashCardState extends State<FlashCardWidget> {
             ),
             Expanded(
               flex: 1,
-              child: Container(
-                child:
-                ElevatedButton(onPressed: showNextCard, child: Text('>'))
-              ),
+              child: ElevatedButton(onPressed: showNextCard, child: Text('>')),
             ),
           ],
         )
