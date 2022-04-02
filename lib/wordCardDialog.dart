@@ -14,7 +14,7 @@ void wordCardDialog(BuildContext context, VocabInfo vocabInfo) async {
           Text(vocabInfo.word, textAlign: TextAlign.center),
           IconButton(
               icon: Icon(
-                Icons.chat,
+                Icons.volume_up,
               ),
               onPressed: () async {
 
@@ -37,7 +37,7 @@ void wordCardDialog(BuildContext context, VocabInfo vocabInfo) async {
 
                 IconButton(
                   icon: Icon(
-                    Icons.chat,
+                    Icons.volume_up,
                   ),
                   onPressed: () async {
 

@@ -126,11 +126,18 @@ class _QuizFormState extends State<QuizForm> {
                       Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Text((whereAt + 1).toString() + ": " + question.text,
+                            Text((whereAt + 1).toString() + ": What's the meaning of '" + question.text+"'?",
                                 style:TextStyle(fontSize:20))
                          ]
                       ),
                       ListTile(
+                        /*
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              color: Colors.green.shade300,
+                            ),
+                            borderRadius: BorderRadius.circular(15.0),
+                          ), */
                         title: Text(question.choice[0]),
                         leading: Radio<String>(
                           value: question.choice[0],
@@ -190,7 +197,19 @@ class _QuizFormState extends State<QuizForm> {
                                 });
 
                             }, child: Text("<")),
+                            ElevatedButton(
+                                child: const Icon(Icons.check),
+                              onPressed: question.userAnswered.isEmpty ? null : () {
 
+                              if (question.userAnswered==question.choice[question.correct]) {
+                                showToast(context, "You are right!");
+                              }
+                              else {
+                                showToast(context, "You are wrong!");
+                              }
+
+
+                            }),
                             ElevatedButton(onPressed: whereAt == quizList.length - 1 ? null : () {
                               //print("selected: "+choiceSelection+" correct answer: "+question.correct.toString());
                               setState(() {

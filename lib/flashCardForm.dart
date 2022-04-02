@@ -173,7 +173,7 @@ class FlashcardBackView extends StatelessWidget {
                     Text(vocabInfo.word, textAlign: TextAlign.center, style: TextStyle(fontSize: 20)),
                     IconButton(
                         icon: Icon(
-                          Icons.chat,
+                          Icons.volume_up,
                         ),
                         onPressed: () async {
 
@@ -190,7 +190,7 @@ class FlashcardBackView extends StatelessWidget {
                     Text(vocabInfo.definition, textAlign: TextAlign.center,style: TextStyle(fontSize: 20)),
                     IconButton(
                         icon: Icon(
-                          Icons.chat,
+                          Icons.volume_up,
                         ),
                         onPressed: () async {
 

@@ -15,7 +15,6 @@ import 'dart:async';
 import 'package:flutter/services.dart' show rootBundle;
 
 import 'configDialog.dart';
-import 'flashCardDialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const String appTitle = "Vocabulary List";
