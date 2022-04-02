@@ -67,12 +67,23 @@ class _MyFlashCardState extends State<FlashCardWidget> {
         },
         child:
 
+        Row(
 
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
+          children: <Widget>[
+            Expanded(
+              flex: 1,
+              child: Container(
+                child:
+                ElevatedButton(
+                    onPressed: showPreviousCard, child: Text('<'))
+              ),
+            ),
+            Expanded(
+              flex: 7,
+              child: Container(
+                width: double.infinity,
+                alignment: Alignment.center,
+                child: SizedBox(
                     width: WIDTH,
                     height: HEIGHT,
                     child: FlipCard(
@@ -81,20 +92,22 @@ class _MyFlashCardState extends State<FlashCardWidget> {
                           vocabInfo: _flashcards[_currentIndex],
                         ),
                         back: FlashcardBackView(
-                          vocabInfo: _flashcards[_currentIndex]
+                            vocabInfo: _flashcards[_currentIndex]
 
-                        ))),
-                /*Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    ElevatedButton(
-                        onPressed: showPreviousCard, child: Text('< Prev')),
-                    ElevatedButton(onPressed: showNextCard, child: Text('Next >')),
-                  ],
-                )*/
-              ],
+                        )))
+
+              ),
             ),
-          )
+            Expanded(
+              flex: 1,
+              child: Container(
+                child:
+                ElevatedButton(onPressed: showNextCard, child: Text('>'))
+              ),
+            ),
+          ],
+        )
+
     ));
 
   }
