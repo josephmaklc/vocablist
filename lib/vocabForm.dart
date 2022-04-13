@@ -142,26 +142,30 @@ class _VocabFormState extends State<VocabForm> {
                       Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            TextButton(onPressed: () async {
+                            OutlinedButton.icon(
+                              onPressed: () async {
+                                if (!wordController.text.isEmpty) {
 
-                              if (!wordController.text.isEmpty) {
+                                  final prefs = await SharedPreferences.getInstance();
+                                  String ttsLanguage = prefs.getString("wordTTS")!;
+                                  String ttsCode = getLanguageCodeForTTS(ttsLanguage);
+                                  //print("ttsLanguage: "+ttsLanguage);
+                                  //print("ttsCode: "+ttsCode);
 
-                                final prefs = await SharedPreferences.getInstance();
-                                String ttsLanguage = prefs.getString("wordTTS")!;
-                                String ttsCode = getLanguageCodeForTTS(ttsLanguage);
-                                print("ttsLanguage: "+ttsLanguage);
-                                print("ttsCode: "+ttsCode);
+                                  doTalking(context, ttsCode,wordController.text);
+                                }
 
-                                doTalking(context, ttsCode,wordController.text);
-
-
-                              }
-                            },
-                                child:Text("Pronounce in "+wordTTS)),
-                            TextButton(onPressed: () {
+                              },
+                              icon: Icon(
+                                Icons.volume_up,
+                                size: 24.0,
+                              ),
+                              label: Text("Pronounce in "+wordTTS),
+                            ),
+                            OutlinedButton(onPressed: () {
                               _launchURL("https://en.wiktionary.org/wiki/"+wordController.text);
                             },
-                                child:Text("Definition on Web >"))
+                                child:Text("Look up on Web >"))
 
                           ]
 
@@ -171,7 +175,7 @@ class _VocabFormState extends State<VocabForm> {
                         children: <Widget>[
 
 
-                          ElevatedButton(onPressed: () async {
+                          OutlinedButton(onPressed: () async {
 
                             String translation = await getTranslation(context, wordController.text,wordLanguage,translationLanguage);
 
@@ -198,23 +202,30 @@ class _VocabFormState extends State<VocabForm> {
                       Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            TextButton(onPressed: () async {
 
+                            OutlinedButton.icon(
+                              onPressed: () async {
+                                if (!definitionController.text.isEmpty) {
+                                  final prefs = await SharedPreferences.getInstance();
 
-                              if (!definitionController.text.isEmpty) {
-                                final prefs = await SharedPreferences.getInstance();
+                                  String ttsLanguage = prefs.getString("translationTTS")!;
 
-                                String ttsLanguage = prefs.getString("translationTTS")!;
+                                  String ttsCode = getLanguageCodeForTTS(ttsLanguage);
+                                  print("ttsLanguage: "+ttsLanguage);
+                                  print("ttsCode: "+ttsCode);
 
-                                String ttsCode = getLanguageCodeForTTS(ttsLanguage);
-                                print("ttsLanguage: "+ttsLanguage);
-                                print("ttsCode: "+ttsCode);
+                                  doTalking(context, ttsCode, definitionController.text);
 
-                                doTalking(context, ttsCode, definitionController.text);
+                                }
 
-                              }
+                              },
+                              icon: Icon(
+                                Icons.volume_up,
+                                size: 24.0,
+                              ),
+                              label: Text("Pronounce in "+translationTTS),
+                            )
 
-                            }, child: Text("Pronounce in "+translationTTS)),
                           ]),
 
                       Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,

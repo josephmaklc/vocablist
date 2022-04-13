@@ -68,8 +68,10 @@ class _MyFlashCardState extends State<FlashCardWidget> {
         child:
 
         Row(
-
           children: <Widget>[
+            SizedBox(
+              width: 10
+            ),
             Expanded(
               flex: 1,
               child: ElevatedButton(
@@ -99,6 +101,10 @@ class _MyFlashCardState extends State<FlashCardWidget> {
               flex: 1,
               child: ElevatedButton(onPressed: showNextCard, child: Text('>')),
             ),
+            SizedBox(
+                width: 10
+            ),
+
           ],
         )
 

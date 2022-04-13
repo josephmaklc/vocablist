@@ -259,9 +259,16 @@ class _QuizFormState extends State<QuizForm> {
                             }, child: Text(">"))
                           ]),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children:[
                             Text("\nScore: "+score.toString()+"/"+quizList.length.toString(),  style:TextStyle(fontSize:20)),
+                          ]
+
+                      ),
+                      if (whereAt == quizList.length - 1) Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children:[
+                            Text("Game Over",  style:TextStyle(fontSize:20)),
                           ]
 
                       )
