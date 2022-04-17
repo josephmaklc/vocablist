@@ -91,6 +91,7 @@ class _QuizFormState extends State<QuizForm> {
   }
 
   List<QuizQuestion> quizList = [];
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<QuizQuestion>>(
@@ -107,8 +108,10 @@ class _QuizFormState extends State<QuizForm> {
   }
 
   Color _determineColor(QuizQuestion q, int choice) {
-    if (!q.checkedAnswer) return Colors.white;
-    if (q.userAnswered.isEmpty) return Colors.white;
+    if (!showScore) {
+      if (!q.checkedAnswer) return Colors.white;
+      if (q.userAnswered.isEmpty) return Colors.white;
+    }
     if (q.correct==choice) return Colors.green;
     return Colors.white;
   }
@@ -119,10 +122,18 @@ class _QuizFormState extends State<QuizForm> {
     return false;
   }
 
-
+  String scorePct() {
+    double pct = score*100/quizList.length;
+    return pct.toStringAsFixed(2)+"%";
+  }
 
   Scaffold quizScaffold(BuildContext context, List<QuizQuestion> quizList) {
     QuizQuestion question = quizList[whereAt];
+    double grade = score/quizList.length;
+    bool poorJob = grade < 0.5;
+    bool goodJob = (grade >= 0.8 && grade < 1);
+    bool perfect = grade==1;
+
     return Scaffold(
         appBar:
         AppBar(title: Text("Quiz"),
@@ -288,9 +299,34 @@ class _QuizFormState extends State<QuizForm> {
                       if (showScore) Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children:[
-                            Text("\nScore: "+score.toString()+"/"+quizList.length.toString(),  style:TextStyle(fontSize:20)),
+                            Text("End of Quiz",  style:TextStyle(fontSize:20)),
                           ]
                       ),
+                      if (showScore) Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children:[
+                            Text("\nScore: "+score.toString()+"/"+quizList.length.toString()+" "+scorePct(),  style:TextStyle(fontSize:20)),
+                          ]
+                      ),
+                      if (showScore && poorJob) Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children:[
+                            Text("\nYou can do better next time",  style:TextStyle(fontSize:20, color: Colors.amber)),
+                          ]
+                      ),
+                      if (showScore && goodJob) Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children:[
+                            Text("\nYou did a good job!",  style:TextStyle(fontSize:20, color: Colors.blue)),
+                          ]
+                      ),
+                      if (showScore && perfect) Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children:[
+                            Text("\nYou got a perfect score!",  style:TextStyle(fontSize:20, color: Colors.green)),
+                          ]
+                      ),
+
 //                      if (questionsAnswered == quizList.length - 1) Row(
 //                          mainAxisAlignment: MainAxisAlignment.center,
 //                          children:[
