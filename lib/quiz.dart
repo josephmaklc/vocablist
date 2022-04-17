@@ -27,7 +27,7 @@ class _QuizFormState extends State<QuizForm> {
 
   //String choiceSelection="";
   int whereAt=0;
-
+  bool showScore = false;
   int score=0;
   Random random = new Random();
 
@@ -118,6 +118,8 @@ class _QuizFormState extends State<QuizForm> {
     if (q.userAnswered.isEmpty) return true;
     return false;
   }
+
+
 
   Scaffold quizScaffold(BuildContext context, List<QuizQuestion> quizList) {
     QuizQuestion question = quizList[whereAt];
@@ -231,13 +233,14 @@ class _QuizFormState extends State<QuizForm> {
                                 });
 
                             }, child: Text("<")),
-                            ElevatedButton(
+                           /* ElevatedButton(
                                 child: Text("Check Answer"),
                               onPressed: _disableCheckAnswer(question) ? null : () {
 
                                 setState(() {
                                   question.checkedAnswer=true;
                                 });
+                                questionsAnswered++;
 
                               if (question.userAnswered==question.choice[question.correct]) {
                                 showToast(context, "You are right!");
@@ -250,7 +253,7 @@ class _QuizFormState extends State<QuizForm> {
                               }
 
 
-                            }),
+                            }),*/
                             ElevatedButton(onPressed: whereAt == quizList.length - 1 ? null : () {
                               //print("selected: "+choiceSelection+" correct answer: "+question.correct.toString());
                               setState(() {
@@ -259,19 +262,42 @@ class _QuizFormState extends State<QuizForm> {
                             }, child: Text(">"))
                           ]),
                       Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children:[SizedBox(height: 50),]
+                      ),
+                      if (showScore==false) Row (
                         mainAxisAlignment: MainAxisAlignment.center,
                         children:[
-                            Text("\nScore: "+score.toString()+"/"+quizList.length.toString(),  style:TextStyle(fontSize:20)),
-                          ]
+                              ElevatedButton(
 
+                              child: Text("Submit Answers"),
+                              onPressed: () {
+
+                                score=0;
+                                setState(() {
+                                  for (QuizQuestion q in quizList) {
+                                    q.checkedAnswer = true;
+                                    if (q.userAnswered == q.choice[q.correct]) score++;
+                                  }
+                                  showScore=true;
+
+                              });
+                              })
+                          ]
                       ),
-                      if (whereAt == quizList.length - 1) Row(
+                      if (showScore) Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children:[
-                            Text("Game Over",  style:TextStyle(fontSize:20)),
+                            Text("\nScore: "+score.toString()+"/"+quizList.length.toString(),  style:TextStyle(fontSize:20)),
                           ]
+                      ),
+//                      if (questionsAnswered == quizList.length - 1) Row(
+//                          mainAxisAlignment: MainAxisAlignment.center,
+//                          children:[
+//                            Text("End of Quiz",  style:TextStyle(fontSize:20)),
+                          //]
 
-                      )
+//                      )
                     ]))));
   }
 }

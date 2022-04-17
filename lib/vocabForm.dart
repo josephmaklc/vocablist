@@ -161,12 +161,7 @@ class _VocabFormState extends State<VocabForm> {
                                 size: 24.0,
                               ),
                               label: Text("Pronounce in "+wordTTS),
-                            ),
-                            OutlinedButton(onPressed: () {
-                              _launchURL("https://en.wiktionary.org/wiki/"+wordController.text);
-                            },
-                                child:Text("Look up on Web >"))
-
+                            )
                           ]
 
                       ),
@@ -187,6 +182,18 @@ class _VocabFormState extends State<VocabForm> {
                           }, child: Text("Translate to "+translationLanguage)),
                         ],
                       ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          OutlinedButton(onPressed: wordLanguage!="English"?null: () {
+                            _launchURL("https://en.wiktionary.org/wiki/"+wordController.text);
+                          },
+                              child:Text("Look up on Web >"))
+                        ]
+
+                      ),
+
+
                       Padding(
                         padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
                         child: Text("Definition:", textAlign: TextAlign.left),
