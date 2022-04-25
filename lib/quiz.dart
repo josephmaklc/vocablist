@@ -1,8 +1,6 @@
-import 'dart:collection';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:vocablist2/toast.dart';
 
 import 'db/model/VocabInfo.dart';
 
@@ -49,9 +47,12 @@ class _QuizFormState extends State<QuizForm> {
   }
 
   Future<List<QuizQuestion>> _getThingsOnStartup() async {
-
-    if (quizList.length>0) return quizList;
+    if (quizList.length > 0) return quizList;
     //print("do Init");
+    return initQuestions();
+  }
+
+  List<QuizQuestion> initQuestions() {
 
     List<QuizQuestion> questions = [];
 
@@ -158,7 +159,7 @@ class _QuizFormState extends State<QuizForm> {
                                 style:TextStyle(fontSize:20))
                          ]
                       ),
-                      ListTile(
+                      RadioListTile(
 
                           shape: RoundedRectangleBorder(
                             side: BorderSide(
@@ -167,70 +168,76 @@ class _QuizFormState extends State<QuizForm> {
                             borderRadius: BorderRadius.circular(15.0),
                           ),
                         title: Text(question.choice[0]),
-                        leading: Radio<String>(
+
                           value: question.choice[0],
+
                           groupValue: question.userAnswered,
                           onChanged: question.checkedAnswer?null: (String? value) {
                             setState(() {
                               question.userAnswered = value!;
                             });
                           },
-                        ),
+
                       ),
-                      ListTile(
+                      RadioListTile(
+
                         shape: RoundedRectangleBorder(
                           side: BorderSide(
-                              color: _determineColor(question,1)
+                              color: _determineColor(question,0)
                           ),
                           borderRadius: BorderRadius.circular(15.0),
                         ),
                         title: Text(question.choice[1]),
-                        leading: Radio<String>(
 
-                          value: question.choice[1],
-                          groupValue: question.userAnswered,
-                          onChanged: question.checkedAnswer?null:  (String? value) {
-                            setState(() {
-                              question.userAnswered = value!;
-                            });
-                          },
-                        ),
+                        value: question.choice[1],
+
+                        groupValue: question.userAnswered,
+                        onChanged: question.checkedAnswer?null: (String? value) {
+                          setState(() {
+                            question.userAnswered = value!;
+                          });
+                        },
+
                       ),
-                      ListTile(
+                      RadioListTile(
+
                         shape: RoundedRectangleBorder(
                           side: BorderSide(
-                              color: _determineColor(question,2)
+                              color: _determineColor(question,0)
                           ),
                           borderRadius: BorderRadius.circular(15.0),
                         ),
                         title: Text(question.choice[2]),
-                        leading: Radio<String>(
-                          value: question.choice[2],
-                          groupValue: question.userAnswered,
-                          onChanged: question.checkedAnswer?null:  (String? value) {
-                            setState(() {
-                              question.userAnswered = value!;
-                            });
-                          },
-                        ),
+
+                        value: question.choice[2],
+
+                        groupValue: question.userAnswered,
+                        onChanged: question.checkedAnswer?null: (String? value) {
+                          setState(() {
+                            question.userAnswered = value!;
+                          });
+                        },
+
                       ),
-                      ListTile(
+                      RadioListTile(
+
                         shape: RoundedRectangleBorder(
                           side: BorderSide(
-                              color: _determineColor(question,3)
+                              color: _determineColor(question,0)
                           ),
                           borderRadius: BorderRadius.circular(15.0),
                         ),
                         title: Text(question.choice[3]),
-                        leading: Radio<String>(
-                          value: question.choice[3],
-                          groupValue: question.userAnswered,
-                          onChanged: question.checkedAnswer?null:  (String? value) {
-                            setState(() {
-                              question.userAnswered = value!;
-                            });
-                          },
-                        ),
+
+                        value: question.choice[3],
+
+                        groupValue: question.userAnswered,
+                        onChanged: question.checkedAnswer?null: (String? value) {
+                          setState(() {
+                            question.userAnswered = value!;
+                          });
+                        },
+
                       ),
 
                       Row(
@@ -326,14 +333,26 @@ class _QuizFormState extends State<QuizForm> {
                             Text("\nYou got a perfect score!",  style:TextStyle(fontSize:20, color: Colors.green)),
                           ]
                       ),
+                      if (showScore) Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children:[
+                                ElevatedButton(
 
-//                      if (questionsAnswered == quizList.length - 1) Row(
-//                          mainAxisAlignment: MainAxisAlignment.center,
-//                          children:[
-//                            Text("End of Quiz",  style:TextStyle(fontSize:20)),
-                          //]
+                                child: Text("Try Again"),
+                                onPressed: () {
 
-//                      )
+                                  setState(() {
+
+                                    quizList = initQuestions();
+                                    whereAt=0;
+                                    showScore = false;
+                                    score=0;
+                                  });
+
+                                })
+                          ]
+                      ),
+
                     ]))));
   }
 }

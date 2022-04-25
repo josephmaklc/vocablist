@@ -32,6 +32,16 @@ void main() {
   );
 }
 
+class Constants{
+  static const String FLASH_CARDS= 'Flash Cards';
+  static const String QUIZ = 'Quiz';
+  static const String SETTINGS = 'Settings';
+
+  static const List<String> choices = <String>[
+      FLASH_CARDS, QUIZ, SETTINGS
+  ];
+}
+
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -45,8 +55,8 @@ class _MyAppState extends State<MyApp> {
   String title=appTitle;
   double fontSize=20;
 
-  String wordLanguage="English", wordTTS="English US (Female)";
-  String translationLanguage="Traditional Chinese", translationTTS="Cantonese Chinese (Female)";
+  String wordLanguage="English", wordTTS="English US";
+  String translationLanguage="Traditional Chinese", translationTTS="Cantonese Chinese";
 
   @override
   void initState() {
@@ -86,29 +96,66 @@ class _MyAppState extends State<MyApp> {
 
   }
 
+  void choiceAction(String choice) async{
+    if(choice == Constants.FLASH_CARDS){
+      showToast(context,"Tap on card to flip card, swipe for another card");
+
+      await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => FlashCardWidget(vocabList: vocabList)));
+    }
+    else if(choice == Constants.QUIZ) {
+
+      await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => QuizForm(vocabList: vocabList)));
+    }
+    else if(choice== Constants.SETTINGS) {
+      ConfigInfo result = await showConfigurationDialog(context, wordLanguage, wordTTS, translationLanguage, translationTTS);
+      final prefs = await SharedPreferences.getInstance();
+
+      setState(() {
+        wordLanguage = result.wordLanguage;
+        wordTTS = result.wordTTS;
+        translationLanguage = result.translationLanguage;
+        translationTTS = result.translationTTS;
+        prefs.setString("wordLanguage",wordLanguage);
+        prefs.setString("wordTTS",wordTTS);
+        prefs.setString("translationLanguage",translationLanguage);
+        prefs.setString("translationTTS",translationTTS);
+      });
+      Navigator.pop(context);
+    }
+  }
+
+  bool determineChoiceAvailable(String choice) {
+    if (choice==Constants.QUIZ) return vocabList.length>3;
+    return true;
+  }
+
   Scaffold vocabListScaffold(BuildContext context, List<VocabInfo> vocabList) {
 
     return Scaffold(
         appBar: AppBar(
 
             title: Text(title),
-            actions: [
-              /*IconButton(
-                icon: const Icon(Icons.info_outline),
-                tooltip: 'About',
-                onPressed: () => {
-                      myShowAboutDialog(context, appTitle, author, version, appDate)
-                },
-              )
+          actions: <Widget>[
+            PopupMenuButton<String>(
+              onSelected: choiceAction,
+              itemBuilder: (BuildContext context){
+                return Constants.choices.map((String choice){
+                  return PopupMenuItem<String>(
+                    value: choice,
+                    child: Text(choice),
+                    enabled: determineChoiceAvailable(choice),
 
-              IconButton(
-                  icon: Icon(Icons.menu),
-                  onPressed: () {
-                    print("menu");
-                  })
-*/
-            ]
-        ),
+                  );
+                })
+                    .toList();
+              }
+              ,)]
+          ),
+
 
         drawer:
         Drawer(
@@ -124,7 +171,7 @@ class _MyAppState extends State<MyApp> {
               ),
 
 
-              ListTile(
+/*              ListTile(
                 leading: const Icon(Icons.note_outlined),
                 title: Text('Flash Cards',style:TextStyle(fontSize: fontSize)),
                 enabled: vocabList.length>0,
@@ -170,7 +217,7 @@ class _MyAppState extends State<MyApp> {
                     Navigator.pop(context);
                   }
 
-              ),
+              ),*/
               ListTile(
                 leading: const Icon(Icons.info_outline),
                 title: Text('About',style:TextStyle(fontSize: fontSize)),
