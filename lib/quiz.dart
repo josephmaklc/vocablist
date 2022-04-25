@@ -48,7 +48,6 @@ class _QuizFormState extends State<QuizForm> {
 
   Future<List<QuizQuestion>> _getThingsOnStartup() async {
     if (quizList.length > 0) return quizList;
-    //print("do Init");
     return initQuestions();
   }
 
@@ -58,9 +57,11 @@ class _QuizFormState extends State<QuizForm> {
 
     int i=0;
     for (VocabInfo v in widget.vocabList) {
-      QuizQuestion q = new QuizQuestion();
+      QuizQuestion q =  QuizQuestion();
       q.text=v.word;
       q.correct = random.nextInt(4);
+      q.checkedAnswer=false;
+      q.userAnswered="";
       List<String> wrongChoices = getWrongChoices(widget.vocabList,v.word);
 
       int k=0;
@@ -78,16 +79,17 @@ class _QuizFormState extends State<QuizForm> {
       i++;
     }
     questions.shuffle();
-    /*
+/*
     for (QuizQuestion q in questions) {
       print("question text: "+q.text);
       print("correct: "+q.correct.toString());
+      print("checked: "+q.checkedAnswer.toString());
       for (String c in q.choice) {
         print("choice: "+c);
       }
       print("------------");
     }
-    */
+*/
     return questions;
   }
 
@@ -129,7 +131,10 @@ class _QuizFormState extends State<QuizForm> {
   }
 
   Scaffold quizScaffold(BuildContext context, List<QuizQuestion> quizList) {
+    if (quizList.isEmpty) return new Scaffold();
+
     QuizQuestion question = quizList[whereAt];
+
     double grade = score/quizList.length;
     bool poorJob = grade < 0.5;
     bool goodJob = (grade >= 0.8 && grade < 1);
@@ -341,9 +346,9 @@ class _QuizFormState extends State<QuizForm> {
                                 child: Text("Try Again"),
                                 onPressed: () {
 
-                                  setState(() {
-
-                                    quizList = initQuestions();
+                                  setState(()
+                                  {
+                                    quizList.clear();
                                     whereAt=0;
                                     showScore = false;
                                     score=0;
