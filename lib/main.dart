@@ -35,10 +35,9 @@ void main() {
 class Constants{
   static const String FLASH_CARDS= 'Flash Cards';
   static const String QUIZ = 'Quiz';
-  static const String SETTINGS = 'Settings';
 
   static const List<String> choices = <String>[
-      FLASH_CARDS, QUIZ, SETTINGS
+      FLASH_CARDS, QUIZ
   ];
 }
 
@@ -110,22 +109,6 @@ class _MyAppState extends State<MyApp> {
           context,
           MaterialPageRoute(builder: (context) => QuizForm(vocabList: vocabList)));
     }
-    else if(choice== Constants.SETTINGS) {
-      ConfigInfo result = await showConfigurationDialog(context, wordLanguage, wordTTS, translationLanguage, translationTTS);
-      final prefs = await SharedPreferences.getInstance();
-
-      setState(() {
-        wordLanguage = result.wordLanguage;
-        wordTTS = result.wordTTS;
-        translationLanguage = result.translationLanguage;
-        translationTTS = result.translationTTS;
-        prefs.setString("wordLanguage",wordLanguage);
-        prefs.setString("wordTTS",wordTTS);
-        prefs.setString("translationLanguage",translationLanguage);
-        prefs.setString("translationTTS",translationTTS);
-      });
-      Navigator.pop(context);
-    }
   }
 
   bool determineChoiceAvailable(String choice) {
@@ -195,6 +178,7 @@ class _MyAppState extends State<MyApp> {
                       MaterialPageRoute(builder: (context) => QuizForm(vocabList: vocabList)));
                 },
               ),
+              */
               ListTile(
                   leading: const Icon(Icons.settings),
                   title: Text('Settings',style:TextStyle(fontSize: fontSize)),
@@ -217,7 +201,7 @@ class _MyAppState extends State<MyApp> {
                     Navigator.pop(context);
                   }
 
-              ),*/
+              ),
               ListTile(
                 leading: const Icon(Icons.info_outline),
                 title: Text('About',style:TextStyle(fontSize: fontSize)),

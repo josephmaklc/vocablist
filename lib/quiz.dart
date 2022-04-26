@@ -188,7 +188,7 @@ class _QuizFormState extends State<QuizForm> {
 
                         shape: RoundedRectangleBorder(
                           side: BorderSide(
-                              color: _determineColor(question,0)
+                              color: _determineColor(question,1)
                           ),
                           borderRadius: BorderRadius.circular(15.0),
                         ),
@@ -208,7 +208,7 @@ class _QuizFormState extends State<QuizForm> {
 
                         shape: RoundedRectangleBorder(
                           side: BorderSide(
-                              color: _determineColor(question,0)
+                              color: _determineColor(question,2)
                           ),
                           borderRadius: BorderRadius.circular(15.0),
                         ),
@@ -228,7 +228,7 @@ class _QuizFormState extends State<QuizForm> {
 
                         shape: RoundedRectangleBorder(
                           side: BorderSide(
-                              color: _determineColor(question,0)
+                              color: _determineColor(question,3)
                           ),
                           borderRadius: BorderRadius.circular(15.0),
                         ),
