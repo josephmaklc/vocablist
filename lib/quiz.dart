@@ -116,6 +116,7 @@ class _QuizFormState extends State<QuizForm> {
       if (q.userAnswered.isEmpty) return Colors.white;
     }
     if (q.correct==choice) return Colors.green;
+    if (q.userAnswered==q.choice[choice]) return Colors.red;
     return Colors.white;
   }
 
