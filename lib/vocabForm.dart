@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:vocablist2/db/model/VocabInfo.dart';
 import 'package:sqflite/sqflite.dart';
@@ -13,6 +15,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 const String translateAPI = "http://api.microsofttranslator.com/V2/Ajax.svc/Translate?oncomplete=mycallback&appId=B3E6A7DFAC5FC07CFFD6496F5F79012228A35E86";
 const String translateAPIResultPrefix = "mycallback";
 const String defaultLanguagePref = "Traditional Chinese";
+
+const String dictionaryAPI = "https://api.dictionaryapi.dev/api/v2/entries/en/";
 
 class VocabForm extends StatefulWidget {
   VocabInfo vocabInfo;
@@ -188,11 +192,26 @@ class _VocabFormState extends State<VocabForm> {
                           OutlinedButton(onPressed: wordLanguage!="English"?null: () {
                             _launchURL("https://en.wiktionary.org/wiki/"+wordController.text);
                           },
-                              child:Text("Look up on Web >"))
+                              child:Text("Look up on Wikitionary >"))
                         ]
 
                       ),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            OutlinedButton(onPressed: wordLanguage!="English"?null: () async {
 
+                              String definition = await getDefinition(context, wordController.text);
+                              setState(() {
+                                widget.vocabInfo.word = wordController.text;
+                                widget.vocabInfo.definition=definition;
+
+                              });
+                            },
+                                child:Text("Get definition >"))
+                          ]
+
+                      ),
 
                       Padding(
                         padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
@@ -305,8 +324,7 @@ Future<String> getTranslation(BuildContext context, String word, String fromLang
   print("url:"+url);
 
   try {
-    final response = await http
-        .get(Uri.parse(url));
+    final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
@@ -334,4 +352,41 @@ Future<String> getTranslation(BuildContext context, String word, String fromLang
     showToast(context, "Sorry, cannot get translation");
     throw Exception;
   }
+}
+
+Future<String> getDefinition(BuildContext context, String word) async {
+  String url = dictionaryAPI+word;
+
+  print("url:"+url);
+
+  try {
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+
+      String receivedJson = response.body;
+      List<dynamic> list = json.decode(receivedJson);
+      //print("word is: "+list[0]['word']);
+      dynamic meaning1  = list[0]['meanings'][0];
+      //print("meaning1: "+meaning1.toString());
+      dynamic def1 = meaning1['definitions'][0]['definition'];
+      //print("def1: "+def1.toString());
+      //[0]['definition'][0]['definition'];
+      //print("def1: "+def1);
+
+      return def1;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      showToast(context, "Sorry, cannot get definition");
+      throw Exception('Failed to call defintion API');
+    }
+  } catch (Exception) {
+    print("can't get definition: "+url);
+    showToast(context, "Sorry, cannot get defintion");
+    throw Exception;
+  }
+
 }
