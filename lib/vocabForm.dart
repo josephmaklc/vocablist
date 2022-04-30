@@ -186,7 +186,7 @@ class _VocabFormState extends State<VocabForm> {
                           }, child: Text("Translate to "+translationLanguage)),
                         ],
                       ),
-                      Row(
+                     /* Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           OutlinedButton(onPressed: wordLanguage!="English"?null: () {
@@ -195,7 +195,7 @@ class _VocabFormState extends State<VocabForm> {
                               child:Text("Look up on Wikitionary >"))
                         ]
 
-                      ),
+                      ),*/
                       Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
@@ -208,7 +208,7 @@ class _VocabFormState extends State<VocabForm> {
 
                               });
                             },
-                                child:Text("Get definition >"))
+                                child:Text("Get definition"))
                           ]
 
                       ),
@@ -225,7 +225,7 @@ class _VocabFormState extends State<VocabForm> {
                           keyboardType: TextInputType.multiline,
                           maxLines: null
                       ),
-                      Row(
+                      /*Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
 
@@ -253,7 +253,7 @@ class _VocabFormState extends State<VocabForm> {
                             )
 
                           ]),
-
+                      */
                       Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 
                           children: <Widget>[

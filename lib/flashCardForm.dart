@@ -144,11 +144,13 @@ class FlashcardView extends StatelessWidget {
     return Card(
       elevation: 4,
       child: Center(
-        child: Text(
+        child:
+        Text(
           vocabInfo.word,
           style: TextStyle(fontSize: 20),
           textAlign: TextAlign.center,
-        ),
+        )
+
       ),
     );
   }
@@ -187,8 +189,11 @@ class FlashcardBackView extends StatelessWidget {
               Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text(vocabInfo.definition, textAlign: TextAlign.center,style: TextStyle(fontSize: 20)),
-                    IconButton(
+                    Flexible(
+                        child: new Text(vocabInfo.definition, textAlign: TextAlign.center,style: TextStyle(fontSize: 20))
+                    ),
+                    //Text(vocabInfo.definition, textAlign: TextAlign.center,style: TextStyle(fontSize: 20)),
+                    /*IconButto
                         icon: Icon(
                           Icons.volume_up,
                         ),
@@ -200,7 +205,7 @@ class FlashcardBackView extends StatelessWidget {
                           doTalking(context,ttsCode,vocabInfo.definition);
 
                           //tts.speak(vocabInfo.definition);
-                        })
+                        })*/
                   ])
             ])
 

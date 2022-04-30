@@ -33,8 +33,12 @@ void wordCardDialog(BuildContext context, VocabInfo vocabInfo) async {
             children: <Widget>[
               Row(
                 mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-                Text(vocabInfo.definition, textAlign: TextAlign.center),
 
+                Flexible(
+                    child: new Text(vocabInfo.definition, textAlign: TextAlign.center)
+                )
+               // Text(vocabInfo.definition, textAlign: TextAlign.center),
+/*
                 IconButton(
                   icon: Icon(
                     Icons.volume_up,
@@ -49,8 +53,9 @@ void wordCardDialog(BuildContext context, VocabInfo vocabInfo) async {
                     //tts.speak(vocabInfo.definition);
 
                   }, // Handle your onTap here.
-              )
-            ])],
+              )*/
+            ])
+          ],
           ),
         ),
         actions: <Widget>[
